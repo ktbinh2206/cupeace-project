@@ -1,0 +1,7 @@
+export const SET_CURRENT_USER_ID = 'setCurrentUserID'
+export const SET_CURRENT_TOKEN = 'setCurrentTOKEN'
+export const LOGOUT = 'logout'
+export const SET_NOTIFICATION_POPUP = 'setNotificationPopup'
+export const SET_CURRENT_SONG = 'setCurrentSong'
+export const SET_CURRENT_SONG_IMAGE = 'setCurrentSongImage'
+export const SET_CURRENT_SONG_NAME = 'setCurrentSongName'
