@@ -37,13 +37,11 @@ const status = [
   },
 ]
 
-export default function SongDetails({ openSongDetails, setOpenSongDetails, song=null }) {
+export default function SongDetails({ openSongDetails, setOpenSongDetails, song = null }) {
 
-  const localDate = new Date(song?.created_at||123);
+  const localDate = new Date(song?.created_at || 123);
   const formatter = new Intl.DateTimeFormat('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' });
   const localDateString = formatter.format(localDate);
-
-  console.log(song);
 
   return (
     <div className={`absolute min-h-60 max-h-[80vh] overflow-auto min-w-96 max-w-[40rem] rounded-md bg-gradient-to-b from-slate-800 to-[#0a0d36]  border border-slate-600 top-[10vh] right-0 left-0 mx-auto z-50 ${openSongDetails || 'hidden'}`}>
@@ -88,42 +86,43 @@ export default function SongDetails({ openSongDetails, setOpenSongDetails, song=
             </div>
             <div className="text-sm flex gap-3">
               <span>{song?.duration}</span>
-              <span><span className="font-medium">{song?.views}</span> views</span>
+              <span><span className="font-medium">{song?.views}</span> streaming</span>
             </div>
           </div>
         </div>
-        <tabl className="px-3">
-
-          <tr className="">
-            <td className="font-bold">Status</td>
-            <td className="flex gap-2"><span className="font-bold">:</span>{status.filter((status) => status?.id == song?.song_status_id)[0]?.icon}</td>
-          </tr>
-          <tr className="">
-            <td className="font-bold">Release</td>
-            <td className="flex gap-2"><span className="font-bold">:</span>{Date(song?.created_at)}</td>
-          </tr>
-          <tr className="">
-            <td className="font-bold">Last Update</td>
-            <td className="flex gap-2"><span className="font-bold">:</span>{Date(song?.updated_at)}</td>
-          </tr>
-          <tr className="">
-            <td className="font-bold">Upload by</td>
-            <td className="flex gap-2">
-              <span className="font-bold">:</span>
-              <span className="font-semibold hover:underline hover:cursor-pointer">
-                {song?.upload_by?.name}
-              </span>
-            </td>
-          </tr>
-          <tr className="">
-            <td className="font-bold">Description</td>
-            <td className="flex gap-2"><span className="font-bold">:</span>{song?.desription}</td>
-          </tr>
-          <tr className="">
-            <td className="font-bold">Lyrics</td>
-            <td className="flex gap-2"><span className="font-bold">:</span>{song?.lyrics}</td>
-          </tr>
-        </tabl>
+        <table className="px-3">
+          <tbody>
+            <tr className="">
+              <td className="font-bold">Status</td>
+              <td className="flex gap-2"><span className="font-bold">:</span>{status.filter((status) => status?.id == song?.song_status_id)[0]?.icon}</td>
+            </tr>
+            <tr className="">
+              <td className="font-bold">Release</td>
+              <td className="flex gap-2"><span className="font-bold">:</span>{Date(song?.created_at)}</td>
+            </tr>
+            <tr className="">
+              <td className="font-bold">Last Update</td>
+              <td className="flex gap-2"><span className="font-bold">:</span>{Date(song?.updated_at)}</td>
+            </tr>
+            <tr className="">
+              <td className="font-bold">Upload by</td>
+              <td className="flex gap-2">
+                <span className="font-bold">:</span>
+                <span className="font-semibold hover:underline hover:cursor-pointer">
+                  {song?.upload_by?.name}
+                </span>
+              </td>
+            </tr>
+            <tr className="">
+              <td className="font-bold">Description</td>
+              <td className="flex gap-2"><span className="font-bold">:</span>{song?.desription}</td>
+            </tr>
+            <tr className="">
+              <td className="font-bold">Lyrics</td>
+              <td className="flex gap-2"><span className="font-bold">:</span>{song?.lyrics}</td>
+            </tr>
+          </tbody>
+        </table>
 
 
         <div className="flex justify-end gap-2 p-3">

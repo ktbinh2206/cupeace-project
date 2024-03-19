@@ -16,7 +16,6 @@ export default function CommonSection() {
         setSongs(data)
       })
       .catch((err) => {
-        console.log(err);
       })
 
     return () => {
@@ -40,8 +39,8 @@ export default function CommonSection() {
                 <PlaylistCard
                   key={song.id}
                   song={song}
-                  image={`${import.meta.env.VITE_API_BASE_URL}/get-image/${song.image}`}
-                  link={`${import.meta.env.VITE_API_BASE_URL}/get-song/${song.link}`} />
+                  image={`${import.meta.env.VITE_GET_IMAGE_URL}/${song.image}`}
+                  link={`${import.meta.env.VITE_GET_SONG_URL}/${song.link}`} />
               ))
             ) : (
               <>

@@ -279,12 +279,6 @@ class SongController extends Controller
         return response()->json($table);
     }
 
-    public function nextSong(Request $request)
-    {
-        $currentSongId = $request->id;
-        return $currentSongId;
-    }
-
     public function stream(Request $request)
     {
         try {
@@ -344,5 +338,16 @@ class SongController extends Controller
             ->count();
 
         return response()->json($total);
+    }
+
+    public function updateStatus(Request $request)
+    {
+        $statusId = $request->input('status-id');
+        $songs = $request->songs;
+        foreach ($songs as $song) {
+            Song::find($song['id'])
+                ->update(['song_status_id' => $statusId]);
+        }
+        return $songs;
     }
 }
