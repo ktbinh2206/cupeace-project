@@ -7,7 +7,7 @@ import {
   BookOpenIcon,
   HomeIcon,
 } from "@heroicons/react/24/solid";
-import { createElement, useEffect, useMemo, useState } from "react";
+import { createElement, memo, useEffect, useMemo, useState } from "react";
 import Profile from "./Profile";
 import { useStore } from "../../../store";
 import axiosClient from "../../../axios";
@@ -30,7 +30,14 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
 }
 
-export default function Example(props) {
+function Example(props) {
+  console.log('re render');
+  const [currentUser, setCurrentUser] = useState();
+  const [state, dispatch] = useStore()
+
+  useEffect(() => {
+    setCurrentUser(state.currentUserID)
+  }, [state.currentUserID])
 
   return (
     <>
@@ -72,27 +79,28 @@ export default function Example(props) {
               </div>
             </div>
           </div>
-          {
-            localStorage.getItem('USERID') !== null ?
-              <div className="flex items-center gap-5">
-                <NavBarNotification />
-                <Profile/>
-              </div>
-              :
-              <div className="absolute inset-y-0 right-0 justify-between pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0 flex">
-                <Link to={"/login"}>
-                  <Button className="h-10 mr-3 hover:bg-slate-700 hover:scale-105 ">
-                    Login
-                  </Button>
-                </Link>
-                <Link to={"/signup"}>
-                  <Button className="h-10 hover:bg-slate-700 hover:scale-105">Signup</Button>
-                </Link>
-              </div>
-          }
+
+
+          <div className={`flex items-center  gap-5 ${currentUser ? '' : 'hidden'}`}>
+            <NavBarNotification />
+            <Profile />
+          </div>
+
+          <div className={`absolute inset-y-0 right-0 justify-between pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0 flex ${currentUser ? 'hidden' : ''}`}>
+            <Link to={"/login"}>
+              <Button className="h-10 mr-3 hover:bg-slate-700 hover:scale-105 ">
+                Login
+              </Button>
+            </Link>
+            <Link to={"/signup"}>
+              <Button className="h-10 hover:bg-slate-700 hover:scale-105">Signup</Button>
+            </Link>
+          </div>
+
         </div>
       </div>
     </>
   )
 
 }
+export default memo(Example)

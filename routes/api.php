@@ -59,11 +59,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/song/follow/{songID}', [SongController::class, 'isFollow']);
     Route::get('/library/songs', [SongController::class, 'getFollowSongs']);
     Route::get('/songs/statuses', [SongController::class, 'statuses']);
+    Route::post('/songs/status', [SongController::class, 'updateStatus']);
     Route::get('/song/status', [SongController::class, 'getSongByStatusId']);
     Route::post('/song/upload', [SongController::class, 'upload']);
-    Route::post('/song/stream',[SongController::class, 'stream']);
-
-
+    Route::post('/song/stream', [SongController::class, 'stream']);
 });
 
 
@@ -72,7 +71,7 @@ Route::post('/login', [AuthController::class, 'login'])->name('login');
 
 Route::resource('/songs', SongController::class);
 Route::get('/songs/{id}/artists', [SongController::class, 'artists']);
-Route::get('/song/streams',[SongController::class,'streams']);
+Route::get('/song/streams', [SongController::class, 'streams']);
 
 Route::resource('/artists', ArtistController::class);
 Route::get('/artists/{id}/songs', [ArtistController::class, 'songs']);

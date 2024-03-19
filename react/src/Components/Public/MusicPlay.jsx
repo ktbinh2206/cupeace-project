@@ -160,19 +160,6 @@ export default function MusicPlay() {
   useEffect(() => {
     let finalDuration = (totalTime + streamingTime);
 
-    console.log('final duration: ' + finalDuration);
-    if (finalDuration > 30) {
-      axiosClient
-        .post('/song/stream', { 'id': prevId, 'duration': finalDuration })
-        .then(data => {
-          console.log(data);
-        })
-        .catch(err => {
-          console.log(err);
-        })
-      console.log('Check duration: ' + finalDuration > 2);
-    }
-
     if (state?.currentSong?.link) {
       audioPlayer.current.src = state?.currentSong?.link; // Update audio source when currentSong changes
       setIsPlaying(true); // Start playing
@@ -181,6 +168,20 @@ export default function MusicPlay() {
 
     setTimestamp(0)
     setTotalTime(0)
+    return () => {
+      console.log('unmout');
+      if (finalDuration > 30) {
+        axiosClient
+          .post('/song/stream', { 'id': prevId, 'duration': finalDuration })
+          .then(data => {
+            console.log(data);
+          })
+          .catch(err => {
+            console.log(err);
+          })
+        console.log('Check duration: ' + finalDuration > 2);
+      }
+    }
   }, [state.currentSong?.id, state.currentSong?.link, state.currentSong?.name]);
 
   const calculateTime = (value) => {

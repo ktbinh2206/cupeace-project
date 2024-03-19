@@ -5,8 +5,10 @@ import { Tooltip } from "@material-tailwind/react"
 import { ArrowPathIcon, EllipsisHorizontalIcon } from "@heroicons/react/24/solid"
 import { Link } from 'react-router-dom'
 import SongDetails from './SongDetails'
+import SongUpdate from './SongUpdate'
+import SongItem from './SongItem'
 
-const status = [
+export const status = [
   {
     id: 1,
     label: 'Public',
@@ -36,12 +38,12 @@ const status = [
     label: 'Banned',
     icon:
       <div className='text-red-600 font-bold'>
-        Public
+        Banned
       </div>,
   },
 ]
 
-const calculateDuration = (currentDate) => {
+export const calculateDuration = (currentDate) => {
 
   let today = new Date();
   let date = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate();
@@ -93,7 +95,7 @@ const calculateDuration = (currentDate) => {
   return result
 }
 
-const OptionItem = ({ isScrolling, song }) => {
+export const OptionItem = ({ isScrolling, song }) => {
 
 
   const options = useRef(null)
@@ -116,12 +118,6 @@ const OptionItem = ({ isScrolling, song }) => {
       };
     }, [ref]);
   }
-
-  useEffect(() => {
-    if (options.current) {
-      const rect = options.current.getBoundingClientRect();
-    }
-  }, [isOpen])
 
   useEffect(() => {
     setIsOpen(false)
@@ -148,84 +144,24 @@ const OptionItem = ({ isScrolling, song }) => {
         ref={options}
         className={`${isOpen ? 'scale-100 ' : 'scale-0 hidden'} z-[1000] transform absolute duration-200 w-40 top-0 right-0 bottom-auto left-auto translate-y-5 -translate-x-2 rounded-md shadow-lg bg-slate-800 ring-1 ring-black ring-opacity-5`}>
         <ul className='flex flex-col gap-1  rounded-lg font-medium'>
-          <li className='hover:bg-slate-600 p-2 rounded-t-lg' onClick={() => setopenSongDetailsModal(true)}>Details</li>
-          <li className='hover:bg-slate-600 p-2 rounded-b-lg'>Edit</li>
+          <li className='hover:bg-slate-600 p-2 rounded-t-lg'
+            onClick={() => {
+              setopenSongDetailsModal(true)
+              setIsOpen(!isOpen)
+            }}>Details</li>
+
         </ul>
       </div>
     </div>
     {/* Modal Add User */}
     <div
       className={`absolute h-screen w-screen bg-[#ffffff0e] top-0 right-0 z-40  ${openSongDetailsModal || 'hidden'}`}
-      onClick={() => setopenSongDetailsModal(false)}
+      onClick={() => {
+        setopenSongDetailsModal(false)
+      }}
     ></div>
     <SongDetails openSongDetails={openSongDetailsModal} song={song} setOpenSongDetails={setopenSongDetailsModal} />
   </>
-  )
-}
-const SongItem = ({ song = null, selected = null, setSelected = null, isScrolling }) => {
-
-
-  const handleSelect = (e) => {
-    let updatedSelected;
-    e.target.checked
-      ? updatedSelected = [...selected, song]
-      : updatedSelected = selected.filter((selected) => selected.id !== song?.id)
-    setSelected(updatedSelected);
-  };
-
-  let timeCreated = calculateDuration(song?.created_at)
-  let timeUpdated = calculateDuration(song?.updated_at)
-
-
-  return (
-    <tr key={song?.id} className="border-t-[0.5px] border-slate-700 ">
-      <td className=" ccr3m cwqwq whitespace-nowrap px-2 py-3">
-        <div className="flex items-center">
-          <label className="inline-flex">
-            <span></span>
-            <input
-              onChange={e => handleSelect(e)}
-              checked={selected?.some((selected) => selected.id === song?.id)}
-              className="table-item h-4 w-4  hover:cursor-pointer border-[#334155] bg-[#0f172a4d] border border-r-[0.25rem] text-[#6366f1]"
-              type="checkbox" />
-          </label>
-        </div>
-      </td>
-      <td className="px-2 py-3">
-        <div className="flex items-center">
-          <div className="mr-2 flex-shrink-0 sm:mr-3 w-14 h-14">
-            <img className=" object-cover rounded-full w-14 h-14" src={`${import.meta.env.VITE_API_BASE_URL}/get-image/${song?.image}`} />
-          </div>
-          <div className="text-slate-100 font-[500]">
-            {song?.name}
-          </div>
-        </div>
-      </td>
-      <td className="whitespace-nowrap ml-2 px-2 py-3">
-        <div className="text-left"> {
-          song?.artists.map((artist, index) => {
-            return (
-              <Link to={''} key={index} className="hover:underline">{artist.name}{
-                song?.artists.length - 1 === index ? `` : `, `}</Link>
-            )
-          }
-          )
-        }
-        </div>
-      </td>
-      <td className="whitespace-nowrap ml-2 px-2 py-3">
-        <div className="text-left">{timeCreated}</div>
-      </td>
-      <td className="whitespace-nowrap ml-2 px-2 py-3">
-        <div className="text-left">{timeUpdated}</div>
-      </td>
-      <td className="whitespace-nowrap ml-2 px-2 py-3">
-        <div className="text-left">{status.filter((status) => status.id == song?.song_status_id)[0]?.icon}</div>
-      </td>
-      <td>
-        <OptionItem isScrolling={isScrolling} song={song} />
-      </td>
-    </tr>
   )
 }
 
@@ -338,6 +274,8 @@ export default function Song() {
   const [urlTail, setUrlTail] = useState('order=desc&field=id&per_page=10')
   const [totalSong, setTotalSong] = useState(0)
   const [isScrolling, setIsScrolling] = useState(false)
+  const [isOpenUpdateSongModal, setIsOpenUpdateSongModal] = useState(false)
+  const [triggerRerender, setTriggerRerender] = useState(false);
 
   const handleSelectAll = (e) => {
     !e.target.checked
@@ -354,19 +292,22 @@ export default function Song() {
       .get('/songs?' + urlTail, { signal })
       .then(({ data }) => {
         setLoading(false)
-        setSongs(data.data);
         setPage(data)
         setTotalSong(data.total)
+        setSongs(data.data);
+        setLoading(false)
       })
       .catch((err) => {
       })
 
     return () => {
-      setLoading(false)
       controller.abort()
     }
   }, [])
 
+  useEffect(() => {
+
+  }, [triggerRerender])
 
   const handleScroll = (e) => {
     setIsScrolling(prevState => !prevState)
@@ -397,6 +338,7 @@ export default function Song() {
   const handleChange = (id, controller) => {
     setLoading(true)
     setSongs()
+    setSelected([])
     const signal = controller.signal
     axiosClient
       .get('/songs?' + urlTail + "&status_id=" + id, { signal })
@@ -411,9 +353,14 @@ export default function Song() {
       })
   }
 
-
   return (
     <>
+      <div
+        className={`absolute h-screen w-screen bg-[#ffffff0e] top-0 right-0 z-40  ${isOpenUpdateSongModal || 'hidden'}`}
+        onClick={() => {
+          setIsOpenUpdateSongModal(false)
+        }}
+      ></div>
       <main
         className="flex-grow  h-full max-h-screen min-h-28 pb-16 overflow-y-scroll"
         onScroll={handleScroll}>
@@ -452,12 +399,31 @@ export default function Song() {
                   {"All Songs "}
                   <span className="font-[500] text-opacity-100 text-[#64748b]">{totalSong}</span>
                 </Link>
-                <div className='flex gap-2 mt-2'>
-                  <StatusItems setPage={setPage} setSongs={setSongs} urlTail={urlTail} setLoading={setLoading} handleChange={handleChange} />
+                <div className='flex justify-between items-center'>
+                  <div className='flex gap-2 mt-2'>
+                    <StatusItems
+                      setPage={setPage}
+                      setSongs={setSongs}
+                      urlTail={urlTail}
+                      setLoading={setLoading}
+                      handleChange={handleChange}
+                      setSelected={setSelected} />
+                  </div>
+                  <div
+                    className={`border-slate-500 border p-2 text-white font-semibold bg-[#5449DE] rounded-lg hover:cursor-pointer ${selected?.length ? '' : 'hidden'}`}
+                    onClick={() => {
+                      setIsOpenUpdateSongModal(true)
+                    }}
+                  >
+                    Update Selected Song
+                  </div>
+                  <SongUpdate
+                    isOpenUpdateSongModal={isOpenUpdateSongModal}
+                    songs={selected}
+                    isScrolling={isScrolling}
+                    setIsOpenUpdateSongModal={setIsOpenUpdateSongModal}
+                    setTriggerRerender={setTriggerRerender} />
                 </div>
-              </div>
-              <div>
-                Update Selected Song
               </div>
             </header>
             <div className="overflow-auto  min-h-28 ">
@@ -467,15 +433,18 @@ export default function Song() {
                     <th className="">
                       <label>
                         <span></span>
+                        {/* Check total row in table,
+                        If has no selected row or change status -> unchecked */}
                         <input
                           id="parent-checkbox"
+                          checked={selected ? selected.length : false}
                           onChange={(e) => handleSelectAll(e)}
                           className="h-4 w-4 border-[#334155] bg-[#0f172a4d] border border-r-[0.25rem] text-[#6366f1] hover:cursor-pointer"
                           type="checkbox" />
                       </label>
                     </th>
                     <th className="py-3 px-2 whitespace-nowrap">
-                      <div className="font-[600] text-left">
+                      <div className="font-[600] text-left ">
                         Song
                       </div>
                     </th>
@@ -518,7 +487,6 @@ export default function Song() {
                         isScrolling={isScrolling} />
                     ))
                   }
-                  <SongItem />
 
                   <tr className={` ${loadingMore ? '' : 'hidden'} `}>
                     <td className=' w-full' colSpan={7}>
