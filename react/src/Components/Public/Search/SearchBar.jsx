@@ -1,5 +1,7 @@
-import { useRef, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { XMarkIcon } from "@heroicons/react/24/solid"
+import { actions, useSearchStore } from "./SearchStore"
+import axiosClient from "../../../axios"
 
 function SearchIcon() {
   return (<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6 text-white">
@@ -8,11 +10,29 @@ function SearchIcon() {
   )
 }
 
-export default function SearchBar({ setResult }) {
+export default function SearchBar() {
   const inputSearch = useRef()
-  const [searchValue, setSearchValue] = useState('')
+  const [state, dispatch] = useSearchStore()
 
+  useEffect(() => {
+    const delayDebounceFn = setTimeout(() => {
 
+      if (state.searchValue) {
+        axiosClient
+          .get('/search?q=' + state.searchValue)
+          .then(({ data }) => {
+            console.log(data);
+            dispatch(actions.setSearchData(data))
+          })
+          .catch(err => {
+            console.log(err);
+          })
+      }
+    }, 500);
+
+    return () => clearTimeout(delayDebounceFn)
+
+  }, [state.searchValue])
 
   return (
     <>
@@ -22,19 +42,14 @@ export default function SearchBar({ setResult }) {
             <SearchIcon />
             <input
               ref={inputSearch}
-              value={searchValue}
-              onChange={e => setSearchValue(e.target.value)}
-              onKeyUp={() => {
-                setTimeout(() => {
-                  console.log('neh' + searchValue)
-                }, 1500)
-              }}
+              value={state.searchValue}
+              onChange={e => dispatch(actions.setSearchValue(e.target.value))}
               className="flex-grow p-2 bg-slate-600 text-white font-semibold "
               type="text"
               placeholder="Enter what you want" />
             <XMarkIcon
               className="w-6 h-6 text-white hover:scale-105 hover:cursor-pointer"
-              onClick={() => { setSearchValue('') }} />
+              onClick={() => dispatch(actions.setSearchValue(''))} />
           </form>
         </div>
       </div>

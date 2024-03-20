@@ -169,7 +169,6 @@ export default function MusicPlay() {
     setTimestamp(0)
     setTotalTime(0)
     return () => {
-      console.log('unmout');
       if (finalDuration > 30) {
         axiosClient
           .post('/song/stream', { 'id': prevId, 'duration': finalDuration })

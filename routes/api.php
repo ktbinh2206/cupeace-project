@@ -3,6 +3,7 @@
 use App\Http\Controllers\ArtistController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\SearchController;
 use App\Http\Controllers\SongController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\VerifyEmailController;
@@ -72,6 +73,8 @@ Route::post('/login', [AuthController::class, 'login'])->name('login');
 Route::resource('/songs', SongController::class);
 Route::get('/songs/{id}/artists', [SongController::class, 'artists']);
 Route::get('/song/streams', [SongController::class, 'streams']);
+
+Route::get('/search', [SearchController::class, 'search']);
 
 Route::resource('/artists', ArtistController::class);
 Route::get('/artists/{id}/songs', [ArtistController::class, 'songs']);
