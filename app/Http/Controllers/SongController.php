@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Song;
 use App\Models\User;
 use App\Notifications\SongPending;
+use App\Notifications\SongStatusUpdate;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -25,11 +26,15 @@ class SongController extends Controller
         $perPage = (int)$request->query('per_page');
         $statusId = $request->query('status_id');
         if ($order == null || $field == null || $perPage == null) {
-            $songs = Song::all();
+            if ($statusId !== null) {
+                $songs = Song::where('song_status_id', $statusId)->get();
+            } else
+                $songs = Song::all();
         } else if ($statusId !== null) {
             $songs = Song::where('song_status_id', $statusId)->orderBy($field, $order)->paginate($perPage);
         } else
             $songs = Song::orderBy($field, $order)->paginate($perPage);
+
         foreach ($songs as $song) {
             $total = DB::table('user_song_actions')
                 ->where('song_id', '=', $song->id)
@@ -344,9 +349,34 @@ class SongController extends Controller
     {
         $statusId = $request->input('status-id');
         $songs = $request->songs;
+        $status = '';
+        switch ($statusId) {
+            case 1:
+                $status = 'Public';
+                break;
+            case 2:
+                $status = 'Private';
+                break;
+            case 3:
+                $status = 'Pending';
+                break;
+            case 4:
+                $status = 'Banned';
+                break;
+            default:
+                $status = '';
+                break;
+        }
         foreach ($songs as $song) {
+            $users = User::find($song['upload_by']);
             Song::find($song['id'])
                 ->update(['song_status_id' => $statusId]);
+            foreach ($users as $user) {
+                Notification::send(
+                    User::find($user->id),
+                    new SongStatusUpdate(Song::find($song['id']), $song['name'] . '\'s status has been update to ' . $status)
+                );
+            }
         }
         return $songs;
     }

@@ -11,7 +11,7 @@ export default function CommonSection() {
     const signal = controller.signal
 
     axiosClient
-      .get('/songs',{ signal })
+      .get('/songs?status_id=1',{ signal })
       .then(({ data }) => {
         setSongs(data)
       })

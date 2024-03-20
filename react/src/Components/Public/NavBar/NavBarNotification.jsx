@@ -59,7 +59,7 @@ const calculateDuration = (currentDate) => {
   return result
 }
 
-const NotificationItems = memo(({ notification, setNotifications, notifications }) => {
+const NotificationItems = memo(({ notification, setTotal }) => {
 
   const [isread, setIsread] = useState(notification.read_at == null ? false : true)
 
@@ -71,7 +71,10 @@ const NotificationItems = memo(({ notification, setNotifications, notifications 
     axiosClient
       .post('/user/notifications/read', { id })
       .then(({ data }) => {
-        console.log(data);
+        if (notification.read_at == false) {
+          setTotal(prev => prev - 1)
+        }
+        notification.read_at = true
       })
       .catch(err => {
         console.log(err);
@@ -150,7 +153,7 @@ export default function NavBarNotification() {
             {
               notifications?.map((notification) => {
                 return <MenuItem key={notification.id} className="pl-3 px-2 hover:bg-slate-700 rounded-md min-h-14 py-[2px] hover:cursor-pointer">
-                  <NotificationItems notification={notification} setNotifications={setNotifications} notifications={notifications} />
+                  <NotificationItems setTotal={setTotal} notification={notification} setNotifications={setNotifications} notifications={notifications} />
                 </MenuItem>
               })
             }

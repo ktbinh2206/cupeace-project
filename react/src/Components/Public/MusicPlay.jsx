@@ -42,7 +42,7 @@ function FollowButton() {
   const [state, dispatch] = useStore();
 
   useEffect(() => {
-    if (state.currentSong.id && state.currentUserID) {
+    if (state.currentSong?.id && state.currentUserID) {
       axiosClient
         .get(`/song/follow/${state.currentSong.id}`,)
         .then(({ data }) => {

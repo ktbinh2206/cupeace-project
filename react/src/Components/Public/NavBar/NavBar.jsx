@@ -31,7 +31,6 @@ function classNames(...classes) {
 }
 
 function Example(props) {
-  console.log('re render');
   const [currentUser, setCurrentUser] = useState();
   const [state, dispatch] = useStore()
 

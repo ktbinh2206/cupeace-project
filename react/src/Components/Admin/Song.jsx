@@ -165,7 +165,7 @@ export const OptionItem = ({ isScrolling, song }) => {
   )
 }
 
-const StatusItems = ({ setLoading, handleChange }) => {
+const StatusItems = ({ setLoading, handleChange,triggerRerender }) => {
 
   const [statuses, setStatuses] = useState()
   const [statusId, setStatusId] = useState(0)
@@ -185,7 +185,7 @@ const StatusItems = ({ setLoading, handleChange }) => {
     return () => {
       controller.abort()
     }
-  }, [])
+  }, [triggerRerender])
 
   useEffect(() => {
     const controller = new AbortController()
@@ -303,10 +303,6 @@ export default function Song() {
     return () => {
       controller.abort()
     }
-  }, [])
-
-  useEffect(() => {
-
   }, [triggerRerender])
 
   const handleScroll = (e) => {
@@ -402,6 +398,7 @@ export default function Song() {
                 <div className='flex justify-between items-center'>
                   <div className='flex gap-2 mt-2'>
                     <StatusItems
+                      triggerRerender={triggerRerender}
                       setPage={setPage}
                       setSongs={setSongs}
                       urlTail={urlTail}

@@ -1,7 +1,7 @@
 
 import { useState } from "react";
 import SongItem from "./SongItem";
-import { Option, Select } from "@material-tailwind/react";
+import { actions, useStore } from "../../store"
 import axiosClient from "../../axios";
 
 const status = [
@@ -45,6 +45,7 @@ const status = [
 
 export default function SongUpdate({ isOpenUpdateSongModal, songs, isScrolling = null, setIsOpenUpdateSongModal, setTriggerRerender }) {
   const [statusUpdate, setStatusUpdate] = useState(1)
+  const [state, dispatch] = useStore()
 
   const handleSubmit = (e) => {
     e.preventDefault()
@@ -53,6 +54,13 @@ export default function SongUpdate({ isOpenUpdateSongModal, songs, isScrolling =
       .then(data => {
         console.log(data.data);
         setTriggerRerender(prev => !prev)
+        setIsOpenUpdateSongModal(false)
+        dispatch(actions.setNotificationPopup([{
+          type: 'success',
+          emphasize: 'UPDATE SUCCESSFULLY',
+          content: 'Selected Songs have been updated'
+        }]))
+
       })
       .catch(err => {
         console.log(err);

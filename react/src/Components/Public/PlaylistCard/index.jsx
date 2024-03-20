@@ -34,7 +34,9 @@ export default function PlaylistCard({ song = null, link = null, image = null })
     <div className="w-72 bg-slate-800 shadow-md rounded-xl hover:shadow-xl overflow-hidden hover:cursor-pointer  ">
       {
         image ?
-          <img src={image}
+          <img
+            loading={'lazy'}
+            src={image}
             className={`h-80 w-72 object-cover rounded-t-xl ${hovered && 'scale-[102%]'} duration-200`}
             onMouseEnter={() => setHovered(true)}
             onMouseLeave={() => setHovered(false)} />
