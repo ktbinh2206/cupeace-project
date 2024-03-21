@@ -22,7 +22,6 @@ export default function Library() {
 
   return (
     <div className='mb-32'>
-      <StickyNavbar current='library' />
 
       <div className='w-full mt-10'>
         <div className='w-[80%] m-auto flex gap-5 border-b-[1px] border-[#b3b5d1] pb-2'>

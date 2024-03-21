@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import logo from "../../../assets/logo.svg"
 import {
   Button,
@@ -30,7 +30,7 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
 }
 
-function Example(props) {
+function Example() {
   const [currentUser, setCurrentUser] = useState();
   const [state, dispatch] = useStore()
 
@@ -44,26 +44,29 @@ function Example(props) {
         <div className="relative flex h-20 items-center justify-between">
           <div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
             <div className="flex flex-shrink-0 items-center">
-              <Link
+              <NavLink
                 to={'/'}>
                 <img
                   className="h-12 w-auto hover:scale-105"
                   src={logo}
                   alt="Your Company"
                 />
-              </Link>
+              </NavLink>
             </div>
             <div className="hidden sm:ml-6 sm:block">
               <div className="flex space-x-4">
                 {navigation.map((item) => (
-                  <Link
+                  <NavLink
                     key={item.name}
                     to={item.href}
-                    className={classNames(
-                      item.current === props.current ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white  hover:scale-105',
-                      'rounded-md h-12 px-3 py-2 text-xl font-medium flex items-center '
+
+                    className={({ isActive }) => (
+                      classNames(
+                        isActive ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white  hover:scale-105',
+                        'rounded-md h-12 px-3 py-2 text-xl font-medium flex items-center '
+                      )
                     )}
-                    aria-current={item.current === props.current ? 'page' : undefined}
+                    aria-current={({ isActive }) => isActive ? 'page' : undefined}
                   >
                     {createElement(item.icon, {
                       className: 'h-6 w-6 mt-3 mb-3',
@@ -72,7 +75,7 @@ function Example(props) {
                     <span className='ml-2'>
                       {item.name}
                     </span>
-                  </Link>
+                  </NavLink>
                 ))
                 }
               </div>
@@ -86,14 +89,14 @@ function Example(props) {
           </div>
 
           <div className={`absolute inset-y-0 right-0 justify-between pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0 flex ${currentUser ? 'hidden' : ''}`}>
-            <Link to={"/login"}>
+            <NavLink to={"/login"}>
               <Button className="h-10 mr-3 hover:bg-slate-700 hover:scale-105 ">
                 Login
               </Button>
-            </Link>
-            <Link to={"/signup"}>
+            </NavLink>
+            <NavLink to={"/signup"}>
               <Button className="h-10 hover:bg-slate-700 hover:scale-105">Signup</Button>
-            </Link>
+            </NavLink>
           </div>
 
         </div>
@@ -102,4 +105,4 @@ function Example(props) {
   )
 
 }
-export default memo(Example)
+export default (Example)

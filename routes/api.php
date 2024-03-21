@@ -79,3 +79,4 @@ Route::get('/search', [SearchController::class, 'search']);
 Route::resource('/artists', ArtistController::class);
 Route::get('/artists/{id}/songs', [ArtistController::class, 'songs']);
 Route::get('/artists/search', [ArtistController::class, 'search'])->name('songs.artists');
+Route::get('/artist/profile', [ArtistController::class, 'profile'])->name('artist.profile');

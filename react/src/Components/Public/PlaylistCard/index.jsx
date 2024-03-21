@@ -34,7 +34,7 @@ export default function PlaylistCard({ song = null }) {
         song?.image ?
           <img
             loading={'lazy'}
-            src={`${import.meta.env.VITE_GET_IMAGE_URL}/`+song?.image}
+            src={`${import.meta.env.VITE_GET_IMAGE_URL}/` + song?.image}
             className={`h-80 w-72 object-cover rounded-t-xl ${hovered && 'scale-[102%]'} duration-200`}
             onMouseEnter={() => setHovered(true)}
             onMouseLeave={() => setHovered(false)} />
@@ -59,7 +59,7 @@ export default function PlaylistCard({ song = null }) {
             {
               song?.artists.map((artist, index) => {
                 return (
-                  <Link to={''} key={index} className="hover:underline">{artist.name}{
+                  <Link to={'/artist/' + artist?.id} key={index} className="hover:underline">{artist.name}{
                     song?.artists.length - 1 === index ? `` : `, `}</Link>
                 )
               }

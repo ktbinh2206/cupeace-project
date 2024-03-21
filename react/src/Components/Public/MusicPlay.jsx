@@ -119,7 +119,6 @@ export default function MusicPlay() {
   const src = `${import.meta.env.VITE_GET_SONG_URL}/` + state.currentSong?.link;
   const image = `${import.meta.env.VITE_GET_IMAGE_URL}/` + state.currentSong?.image;
   const prevId = usePrevious(state.currentSong?.id);
-  console.log(src);
   const [streamingTime, setStreamingTime] = useState(0)
 
   const audioPlayer = useRef();

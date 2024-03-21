@@ -1,6 +1,10 @@
+import { Link } from "react-router-dom"
+
 const ArtistCard = ({ artist }) => {
   return (
-    <div className="hover:bg-slate-700 hover:cursor-pointer object-contain rounded-xl">
+    <Link
+      to={'/artist/' + artist.id}
+      className="hover:bg-slate-700 hover:cursor-pointer object-contain rounded-xl">
       <div className="w-40 h-40 p-1">
         <div className="w-full h-[7.5rem] flex justify-center">
           <img
@@ -11,7 +15,7 @@ const ArtistCard = ({ artist }) => {
           {artist.name}
         </div>
       </div>
-    </div>
+    </Link>
   )
 }
 

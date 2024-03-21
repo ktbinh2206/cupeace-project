@@ -4,7 +4,6 @@ import CommonSection from './CommonSection'
 function Homepage() {
   return (
     <>
-      <StickyNavbar current='home' />
       <CommonSection />
     </>
   );

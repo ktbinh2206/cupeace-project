@@ -14,6 +14,7 @@ import AdminLayout from "./Components/Layouts/AdminLayout";
 import Dashboard from "./Components/Admin/Dashboard";
 import Account from "./Components/Admin/Account";
 import Song from "./Components/Admin/Song";
+import ArtistProfile from "./Components/Public/ArtistProfile";
 
 
 const router = createBrowserRouter([
@@ -23,7 +24,7 @@ const router = createBrowserRouter([
     element: <DefaultLayout />,
     children: [
       {
-        path: '/',
+        index: true,
         element: <Homepage />
       },
       {
@@ -46,6 +47,11 @@ const router = createBrowserRouter([
             element: <Playlists />
           },
         ]
+      },
+      {
+        path: '/artist/:id',
+        element:
+          <ArtistProfile />
       },
     ]
   },
@@ -75,7 +81,7 @@ const router = createBrowserRouter([
     element: <AdminLayout />,
     children: [
       {
-        path: '/admin/dashboard',
+        index: true,
         element: <Dashboard />
       },
       {

@@ -10,7 +10,6 @@ export default function Search() {
 
   return (
     <SearchContext.Provider value={[state, dispatch]}>
-      <StickyNavbar current='search' />
       <div className="mt-3">
         <SearchBar />
         <SearchResult />

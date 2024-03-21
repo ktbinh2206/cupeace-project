@@ -96,8 +96,19 @@ class ArtistController extends Controller
 
     public function userID()
     {
-        $userId= Auth::id();
+        $userId = Auth::id();
         $artist = Artist::where('user_id', $userId)->first();
         return response()->json($artist);
+    }
+    public function profile(Request $request)
+    {
+        $artistId = $request->query('id');
+        $artist = Artist::find($artistId);
+        $artist->views = $artist->totalViews();
+        $artist->songs;
+        foreach ($artist->songs as $song) {
+            $song->views = $song->views();
+        }
+        return $artist;
     }
 }

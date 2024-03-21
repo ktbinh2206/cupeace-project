@@ -53,7 +53,7 @@ const SongItem = ({ song, index }) => {
             <div className="text-left text-slate-400 font-normal"> {
               song?.artists.map((artist, index) => {
                 return (
-                  <Link to={''} key={index} className="hover:underline">{artist.name}{
+                  <Link to={'/artist/' + artist.id} key={index} className="hover:underline">{artist.name}{
                     song?.artists.length - 1 === index ? `` : `, `}</Link>
                 )
               }
