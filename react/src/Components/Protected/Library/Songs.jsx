@@ -111,10 +111,9 @@ function SongItem({ index = '#', song = null }) {
 
   const handlePlay = () => {
     console.log(song?.name);
-    const baseUrl = `${import.meta.env.VITE_API_BASE_URL}`
-    dispatch(actions.setCurrentSong(baseUrl + '/get-song/' + song?.link));
-    dispatch(actions.setCurrentSongImage(baseUrl + '/get-image/' + song?.image));
-    dispatch(actions.setCurrentSongName(song));
+    if (song?.id != state?.currentSong?.id || !state.currentSong.id) {
+      dispatch(actions.setCurrentSong(song));
+    }
   }
 
   return (

@@ -11,13 +11,29 @@ class SearchController extends Controller
     public function search(Request $request)
     {
         $searchValue = $request->query('q');
-        $songs = Song::search($searchValue)->get();
-        $artists = Artist::search($searchValue)->get();
 
-        $searchData = (object) [
+        $songs_query = Song::query();
+        $songs_query = Song::search($searchValue);
+        $songs = $songs_query->get();
+        foreach ($songs as $song) {
+            $song->artists;
+            $song->views = $song->views();
+        }
+        $songs = $songs->sortByDesc('views')->values();
+
+
+        $artists_query = Artist::query();
+        $artists_query = Artist::search($searchValue);
+        $artists = $artists_query->get();
+        foreach ($artists as $artist) {
+            $artist->views = $artist->totalViews();
+        }
+        $artists = $artists->sortByDesc('views')->values();
+        $data = (object)[
             'songs' => $songs,
-            'artists' => $artists
+            'artists' => $artists,
         ];
-        return $searchData;
+
+        return $data;
     }
 }

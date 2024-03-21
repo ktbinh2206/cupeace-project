@@ -38,9 +38,7 @@ export default function CommonSection() {
               songs.map((song) => (
                 <PlaylistCard
                   key={song.id}
-                  song={song}
-                  image={`${import.meta.env.VITE_GET_IMAGE_URL}/${song.image}`}
-                  link={`${import.meta.env.VITE_GET_SONG_URL}/${song.link}`} />
+                  song={song} />
               ))
             ) : (
               <>

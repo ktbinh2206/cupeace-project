@@ -16,20 +16,18 @@ class UserSongActionSeeder extends Seeder
     {
         $table = DB::table('user_song_actions');
 
-        $data = [
-        ];
+
 
         Schema::disableForeignKeyConstraints();
         $table->truncate();
-
-        foreach ($data as $datum) {
+        for ($i = 0; $i < 10000; $i++) {
             $table->insert([
-                'user_id' => $datum[0],
-                'song_id' => $datum[1],
-                'duration' => $datum[2],
-                'created_at' => $datum[3],
-                'updated_at' => $datum[4],
-                'action_type_id' => $datum[5],
+                'user_id' => rand(1, 19),
+                'song_id' =>  rand(1, 12),
+                'duration' =>  '00:00:30',
+                'created_at' => now(),
+                'updated_at' => now(),
+                'action_type_id' => rand(1, 3),
             ]);
         }
 

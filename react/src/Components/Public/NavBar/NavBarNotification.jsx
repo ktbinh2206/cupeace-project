@@ -115,14 +115,15 @@ export default function NavBarNotification() {
 
     const controller = new AbortController()
 
-    axiosClient
-      .get('/user/notifications', { signal: controller.signal })
-      .then(({ data }) => {
-        setTotal(data.total)
-        setNotifications(data.data)
-      })
-      .catch((err) => {
-      })
+    localStorage.getItem('USERID') !== null &&
+      axiosClient
+        .get('/user/notifications', { signal: controller.signal })
+        .then(({ data }) => {
+          setTotal(data.total)
+          setNotifications(data.data)
+        })
+        .catch((err) => {
+        })
 
     return () => controller.abort();
   }, [])

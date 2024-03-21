@@ -6,7 +6,7 @@ import { Tooltip } from "@material-tailwind/react"
 import { Link } from "react-router-dom";
 import { PlayCircleIcon } from '@heroicons/react/24/solid'
 
-export default function PlaylistCard({ song = null, link = null, image = null }) {
+export default function PlaylistCard({ song = null }) {
 
   const [state, dispatch] = useStore();
 
@@ -24,8 +24,6 @@ export default function PlaylistCard({ song = null, link = null, image = null })
       navigate('/login')
     }
     if (song?.id != state?.currentSong?.id || !state.currentSong.id) {
-      song.link = link
-      song.image = image
       dispatch(actions.setCurrentSong(song));
     }
   }
@@ -33,10 +31,10 @@ export default function PlaylistCard({ song = null, link = null, image = null })
   return (
     <div className="w-72 bg-slate-800 shadow-md rounded-xl hover:shadow-xl overflow-hidden hover:cursor-pointer  ">
       {
-        image ?
+        song?.image ?
           <img
             loading={'lazy'}
-            src={image}
+            src={`${import.meta.env.VITE_GET_IMAGE_URL}/`+song?.image}
             className={`h-80 w-72 object-cover rounded-t-xl ${hovered && 'scale-[102%]'} duration-200`}
             onMouseEnter={() => setHovered(true)}
             onMouseLeave={() => setHovered(false)} />

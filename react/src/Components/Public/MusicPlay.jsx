@@ -116,10 +116,10 @@ function usePrevious(value) {
 export default function MusicPlay() {
 
   const [state, dispatch] = useStore();
-  const src = state.currentSong?.link;
-  const image = state.currentSong?.image;
+  const src = `${import.meta.env.VITE_GET_SONG_URL}/` + state.currentSong?.link;
+  const image = `${import.meta.env.VITE_GET_IMAGE_URL}/` + state.currentSong?.image;
   const prevId = usePrevious(state.currentSong?.id);
-
+  console.log(src);
   const [streamingTime, setStreamingTime] = useState(0)
 
   const audioPlayer = useRef();
@@ -161,7 +161,7 @@ export default function MusicPlay() {
     let finalDuration = (totalTime + streamingTime);
 
     if (state?.currentSong?.link) {
-      audioPlayer.current.src = state?.currentSong?.link; // Update audio source when currentSong changes
+      audioPlayer.current.src = `${import.meta.env.VITE_GET_SONG_URL}/` + state?.currentSong?.link; // Update audio source when currentSong changes
       setIsPlaying(true); // Start playing
       audioPlayer.current.play()
     }

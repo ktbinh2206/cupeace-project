@@ -17,16 +17,17 @@ export default function SearchBar() {
   useEffect(() => {
     const delayDebounceFn = setTimeout(() => {
 
-      if (state.searchValue) {
+      if (state.searchValue.trim()) {
         axiosClient
-          .get('/search?q=' + state.searchValue)
+          .get('/search?q=' + state.searchValue.trim())
           .then(({ data }) => {
-            console.log(data);
             dispatch(actions.setSearchData(data))
           })
           .catch(err => {
             console.log(err);
           })
+      } else {
+        dispatch(actions.setSearchData(null))
       }
     }, 500);
 
@@ -36,8 +37,8 @@ export default function SearchBar() {
 
   return (
     <>
-      <div className="flex justify-center">
-        <div className="w-80 rounded-3xl bg-slate-600 px-2 py-1">
+      <div className="flex justify-center sticky">
+        <div className="w-96 rounded-3xl bg-slate-600 px-2 py-1">
           <form className=" w-full flex justify-around rounded-3xl  items-center">
             <SearchIcon />
             <input
