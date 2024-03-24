@@ -52,7 +52,7 @@ export default function PlaylistCard({ song = null }) {
       </div>
       <div className="px-4 py-3 w-72">
         <Tooltip content={song?.name}>
-          <p data-tooltip-target="tooltip-songname" className="text-xl font-bold text-white truncate block capitalize hover:text-[#5449DE]">{song?.name}</p>
+          <Link to={'/song/' + song?.id} data-tooltip-target="tooltip-songname" className="text-xl font-bold text-white truncate block capitalize hover:text-[#5449DE]">{song?.name}</Link>
         </Tooltip>
         <div className="flex items-center">
           <p className="text-lg  text-neutral-400 cursor-auto my-3 ">

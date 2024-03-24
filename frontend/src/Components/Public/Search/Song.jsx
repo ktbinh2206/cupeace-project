@@ -10,7 +10,7 @@ function formatTime(time) {
 }
 
 const SongItem = ({ song }) => {
-  const [globalState,globalDispatch] = useStore()
+  const [globalState, globalDispatch] = useStore()
 
   const [hover, setHover] = useState(false)
 
@@ -25,27 +25,27 @@ const SongItem = ({ song }) => {
           <div className="mr-2 flex-shrink-0 sm:mr-3 w-14 h-14">
             <img className=" object-cover rounded-xl w-14 h-14" src={`${import.meta.env.VITE_GET_IMAGE_URL}/${song?.image}`} />
             <Tooltip content="Play Song"
-            placement="top"
-            animate={{
-              mount: { scale: 1, y: 0 },
-              unmount: { scale: 0, y: 25 },
-            }}>
-            <PlayIcon
-            className={`${hover?'cursor-pointer':'hidden'} active:scale-95 relative w-10 h-10 -top-12 left-2 text-white`}
-            onClick={()=>{
-              globalDispatch(actions.setCurrentSong(song));
-            }}
-            />
+              placement="top"
+              animate={{
+                mount: { scale: 1, y: 0 },
+                unmount: { scale: 0, y: 25 },
+              }}>
+              <PlayIcon
+                className={`${hover ? 'cursor-pointer' : 'hidden'} active:scale-95 relative w-10 h-10 -top-12 left-2 text-white`}
+                onClick={() => {
+                  globalDispatch(actions.setCurrentSong(song));
+                }}
+              />
             </Tooltip>
           </div>
           <div>
-            <div className="text-slate-100 font-[500] hover:underline hover:cursor-pointer">
+            <Link to={'song/' + song?.id} className="text-slate-100 font-[500] hover:underline hover:cursor-pointer">
               {song?.name}
-            </div>
+            </Link>
             <div className="text-left text-slate-400 font-normal"> {
               song?.artists.map((artist, index) => {
                 return (
-                  <Link to={'/artist/'+artist.id} key={index} className="hover:underline">{artist.name}{
+                  <Link to={'/artist/' + artist.id} key={index} className="hover:underline">{artist.name}{
                     song?.artists.length - 1 === index ? `` : `, `}</Link>
                 )
               }

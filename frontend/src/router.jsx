@@ -15,7 +15,7 @@ import Dashboard from "./Components/Admin/Dashboard";
 import Account from "./Components/Admin/Account";
 import Song from "./Components/Admin/Song";
 import ArtistProfile from "./Components/Public/ArtistProfile";
-
+import SongProfile from "./Components/Public/SongProfile";
 
 const router = createBrowserRouter([
 
@@ -52,6 +52,11 @@ const router = createBrowserRouter([
         path: '/artist/:id',
         element:
           <ArtistProfile />
+      },
+      {
+        path: '/song/:id',
+        element:
+          <SongProfile />
       },
     ]
   },

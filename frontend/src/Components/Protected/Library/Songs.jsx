@@ -135,16 +135,16 @@ function SongItem({ index = '#', song = null }) {
           : index}
       </div>
       <div className="col-span-4">
-        <div className="text-white font-mono text-xl ">
+        <Link to={'/song/' + song?.id} className="text-white font-mono text-xl ">
           {song?.name.length > 30 ? song?.name.slice(0, 30) + '...' : song?.name}
-        </div>
+        </Link>
       </div>
       <div className="col-span-3">
         <div className={`  ${hover ? 'text-white ' : 'text-[#7e7575]'} font-bold`}>
           {
             song?.artists.map((artist, index) => {
               return (
-                <Link to={''} key={index} className="hover:underline">{artist.name}{
+                <Link to={'/artist/' + artist.id} key={index} className="hover:underline">{artist.name}{
                   song?.artists.length - 1 === index ? `` : `, `}</Link>
               )
             }

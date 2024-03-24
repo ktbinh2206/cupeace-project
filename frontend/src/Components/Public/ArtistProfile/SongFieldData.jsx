@@ -14,21 +14,21 @@ function formatViews(view) {
 }
 
 
-const SongItem = ({ song, index }) => {
+const SongItem = ({ song = null, index }) => {
   const [globalState, globalDispatch] = useStore()
 
   const [hover, setHover] = useState(false)
 
   return (
-    <div
-      className=" mx-3 grid grid-cols-12 items-center hover:bg-slate-700 rounded-lg"
+    <tr
+      className="items-center hover:bg-slate-700 rounded-md "
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
     >
-      <div className="px-2 py-1 col-span-1 text-center text-slate-200 font-semibold">
+      <td className="text-center py-1 text-slate-200 font-semibold rounded-l-xl">
         {index}
-      </div>
-      <div className="px-2 py-1 col-span-5">
+      </td>
+      <td className="py-1">
         <div className="flex items-center">
           <div className="mr-2 flex-shrink-0 sm:mr-3 w-14 h-14">
             <img className=" object-cover rounded-xl w-14 h-14" src={`${import.meta.env.VITE_GET_IMAGE_URL}/${song?.image}`} />
@@ -47,48 +47,34 @@ const SongItem = ({ song, index }) => {
             </Tooltip>
           </div>
           <div>
-            <div className="text-slate-100 font-[500] hover:underline hover:cursor-pointer">
+            <Link to={'/song/' + song?.id} className="pl-3 text-slate-100 font-[500] hover:underline hover:cursor-pointer">
               {song?.name}
-            </div>
-            <div className="text-left text-slate-400 font-normal"> {
-              song?.artists.map((artist, index) => {
-                return (
-                  <Link to={'/artist/' + artist.id} key={index} className="hover:underline">{artist.name}{
-                    song?.artists.length - 1 === index ? `` : `, `}</Link>
-                )
-              }
-              )
-            }
-            </div>
+            </Link>
           </div>
         </div>
-      </div>
-      <div className="whitespace-nowrap ml-2 px-2 py-3 col-span-3">
+      </td>
+      <td className="whitespace-nowrap ml-2 px-2 py-3">
         <div className="text-center text-slate-400">{formatViews(song?.views)}</div>
-      </div>
-      <div className="whitespace-nowrap ml-2 px-2 py-3 col-span-3">
+      </td>
+      <td className="whitespace-nowrap ml-2 px-2 py-3 rounded-r-xl">
         <div className="text-center text-slate-400">{formatTime(song.duration)}</div>
-      </div>
-    </div>
+      </td>
+    </tr>
   )
 }
 
-export default function Song({ songs }) {
+export default function Song({ songs = null }) {
   return (
     <>
-      <div className="grid grid-cols-12 items-center text-slate-300 font-bold hover:bg-slate-700 mx-3 border-b border-slate-600 my-2 pb-2 sticky">
-        <div className="col-span-1 text-center">#</div>
-        <div className="col-span-5 pl-2">Name</div>
-        <div className="col-span-3 text-center">Streams</div>
-        <div className="col-span-3 text-center">Duration</div>
-      </div>
-      <div className="overflow-auto pb-36  object-cover">
-        {
-          songs?.map((song, index) => (
-            <SongItem key={song.id} song={song} index={index + 1} />
-          ))
-        }
-      </div>
+      <table className="overflow-auto object-cover w-full">
+        <tbody>
+          {
+            songs?.map((song, index) => (
+              <SongItem key={song.id} song={song} index={index + 1} />
+            ))
+          }
+        </tbody>
+      </table>
     </>
   )
 };
