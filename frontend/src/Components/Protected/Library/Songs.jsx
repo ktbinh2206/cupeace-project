@@ -217,46 +217,48 @@ export default function Songs() {
 
   return (
     <div className="w-[80%] m-auto mt-2 flex flex-col justify-around gap-1">
-      <div className="pb-3 hover:bg-[#0d193f] grid grid-cols-12 text-[#8184a3] font-bold border-b-[0.2px] ">
-        <div className="col-span-1 pl-3">
-          #
-        </div>
-        <div className="col-span-4 pl-3">
-          Name
-        </div>
-        <div className="col-span-3 pl-2">
-          Artist
-        </div>
-        <div className="col-span-2 pl-2">
-          Action
-        </div>
-        <div className="col-span-1">
 
-        </div>
-        <div className="col-span-1">
-
-        </div>
-      </div>
       {songs ?
         songs.length
-          ? songs.map((item, index) => {
-            return (
-              <SongItem key={item.id} index={index + 1} song={item} />
-            )
-          })
+          ? <>
+            <div className="pb-3 grid grid-cols-12 text-[#8184a3] font-bold border-b-[0.2px] ">
+              <div className="col-span-1 pl-3">
+                #
+              </div>
+              <div className="col-span-4 pl-3">
+                Name
+              </div>
+              <div className="col-span-3 pl-2">
+                Artist
+              </div>
+              <div className="col-span-2 pl-2">
+                Action
+              </div>
+              <div className="col-span-1">
+
+              </div>
+              <div className="col-span-1">
+
+              </div>
+            </div>
+            {
+              songs.map((item, index) => {
+                return (
+                  <SongItem key={item.id} index={index + 1} song={item} />
+                )
+              })
+            }
+          </>
           :
           <div className="grid">
             <h1 className="text-slate-400 font-semibold text-2xl text-center pt-7">
               You haven't follow any song
             </h1>
           </div>
-        : <>
-          <SongItem />
-          <SongItem />
-          <SongItem />
+        :
+        <>
         </>
       }
-
     </div>
   )
 }

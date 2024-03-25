@@ -20,14 +20,14 @@ class UserSongActionSeeder extends Seeder
 
         Schema::disableForeignKeyConstraints();
         $table->truncate();
-        for ($i = 0; $i < 10000; $i++) {
+        for ($i = 0; $i < 100000; $i++) {
             $table->insert([
                 'user_id' => rand(1, 19),
                 'song_id' =>  rand(1, 12),
                 'duration' =>  '00:00:30',
                 'created_at' => now(),
                 'updated_at' => now(),
-                'action_type_id' => rand(1, 3),
+                'action_type_id' => 2,
             ]);
         }
 

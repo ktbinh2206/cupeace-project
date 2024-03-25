@@ -165,10 +165,9 @@ export const OptionItem = ({ isScrolling, song }) => {
   )
 }
 
-const StatusItems = ({ setLoading, handleChange,triggerRerender }) => {
+const StatusItems = ({ setStatusId, statusId, setLoading, handleChange, triggerRerender }) => {
 
   const [statuses, setStatuses] = useState()
-  const [statusId, setStatusId] = useState(0)
 
   useEffect(() => {
 
@@ -277,6 +276,9 @@ export default function Song() {
   const [isOpenUpdateSongModal, setIsOpenUpdateSongModal] = useState(false)
   const [triggerRerender, setTriggerRerender] = useState(false);
 
+
+  const [statusId, setStatusId] = useState(0)
+
   const handleSelectAll = (e) => {
     !e.target.checked
       ? setSelected([])
@@ -311,7 +313,7 @@ export default function Song() {
     if (bottom && page.next_page_url) {
       setLoadingMore(true)
       axiosClient
-        .get(page.next_page_url + '&' + urlTail)
+        .get(page.next_page_url + '&' + urlTail + '&status_id=' + statusId)
         .then(({ data }) => {
           setPage(data)
           setSongs([...songs, ...data.data])
@@ -404,7 +406,10 @@ export default function Song() {
                       urlTail={urlTail}
                       setLoading={setLoading}
                       handleChange={handleChange}
-                      setSelected={setSelected} />
+                      setSelected={setSelected}
+                      statusId={statusId}
+                      setStatusId={setStatusId}
+                    />
                   </div>
                   <div
                     className={`border-slate-500 border p-2 text-white font-semibold bg-[#5449DE] rounded-lg hover:cursor-pointer ${selected?.length ? '' : 'hidden'}`}

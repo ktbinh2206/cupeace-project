@@ -56,7 +56,7 @@ function FollowButton() {
           console.error('Error checking follow status:', error);
         })
     }
-  }, [state.currentSongId])
+  }, [state.currentSong])
 
   function handleFollow() {
     setIsFollowed(true)
@@ -81,7 +81,7 @@ function FollowButton() {
         dispatch(actions.setNotificationPopup([{
           type: 'success',
           emphasize: `UNFOLLOW SONG SUCCESS`,
-          content: `You have just unfollow song " ${state.currentSongName}"`
+          content: `You have just unfollow song " ${state.currentSong.name}"`
         }]))
       })
       .catch(err => {
@@ -92,14 +92,17 @@ function FollowButton() {
 
   return (
     <div>{
-      isFollowed == true
-        ? <div onClick={handleUnfollow}>
-          <SolidHeart />
-        </div>
+      state.currentSong?.id ?
+        isFollowed == true
+          ? <div onClick={handleUnfollow}>
+            <SolidHeart />
+          </div>
+          :
+          <div onClick={handleFollow}>
+            <OutlineHeart />
+          </div>
         :
-        <div onClick={handleFollow}>
-          <OutlineHeart />
-        </div>
+        <></>
     }
     </div>
   )
@@ -225,7 +228,7 @@ export default function MusicPlay() {
   return (
     <>
       <audio src={src} ref={audioPlayer} muted={mute} onTimeUpdate={timeUpdate} />
-      <div id="music-play" className="flex items-center justify-between h-32 w-full fixed bottom-0 bg-black border-t border-gray-400">
+      <div id="music-play" className="flex items-center justify-between h-32 w-full fixed bottom-0 bg-[black] border-t border-gray-400">
         <div className="left-item text-white w-1/5 pl-6 flex justify-between items-center">
           {state?.currentSong?.image ?
             <div className="flex items-center  gap-5">

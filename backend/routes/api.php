@@ -40,9 +40,8 @@ Route::get('/get-song/{path}', function ($path) {
 //logined route
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user', function (Request $request) {
-        $admin = User::role('Admin')->get();
-
-        return $admin;
+        $user = Auth::user();
+        return $user;
     });
     // /users/roles/order=?&field=?
     Route::get('/users/roles', [UserController::class, 'usersWithRoles'])->name('users.roles');

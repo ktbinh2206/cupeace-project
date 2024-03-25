@@ -76,19 +76,28 @@ const SongItem = ({ song, index }) => {
 export default function Song({ songs }) {
   return (
     <>
-      <div className="grid grid-cols-12 items-center text-slate-300 font-bold hover:bg-slate-700 mx-3 border-b border-slate-600 my-2 pb-2 sticky">
-        <div className="col-span-1 text-center">#</div>
-        <div className="col-span-5 pl-2">Name</div>
-        <div className="col-span-3 text-center">Streams</div>
-        <div className="col-span-3 text-center">Duration</div>
-      </div>
-      <div className="overflow-auto pb-36  object-cover">
-        {
-          songs?.map((song, index) => (
-            <SongItem key={song.id} song={song} index={index + 1} />
-          ))
-        }
-      </div>
+      {
+        songs.length ?
+          <>
+            <div className="grid grid-cols-12 items-center text-slate-300 font-bold hover:bg-slate-700 mx-3 border-b border-slate-600 my-2 pb-2 pt-4 sticky">
+              <div className="col-span-1 text-center">#</div>
+              <div className="col-span-5 pl-2">Name</div>
+              <div className="col-span-3 text-center">Streams</div>
+              <div className="col-span-3 text-center">Duration</div>
+            </div>
+            <div className="overflow-auto pb-36  object-cover">
+              {
+                songs?.map((song, index) => (
+                  <SongItem key={song.id} song={song} index={index + 1} />
+                ))
+              }
+            </div>
+          </>
+          :
+          <div className="text-slate-600 font-semibold text-2xl pt-4 text-center w-full">
+            No song match
+          </div>
+      }
     </>
   )
 };

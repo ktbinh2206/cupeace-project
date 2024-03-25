@@ -39,7 +39,7 @@ const SongItem = ({ song }) => {
             </Tooltip>
           </div>
           <div>
-            <Link to={'song/' + song?.id} className="text-slate-100 font-[500] hover:underline hover:cursor-pointer">
+            <Link to={'/song/' + song?.id} className="text-slate-100 font-[500] hover:underline hover:cursor-pointer">
               {song?.name}
             </Link>
             <div className="text-left text-slate-400 font-normal"> {

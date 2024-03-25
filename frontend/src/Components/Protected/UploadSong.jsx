@@ -3,6 +3,10 @@ import StickyNavbar from "../Public/NavBar/NavBar";
 import axiosClient from "../../axios";
 import { actions, useStore } from "../../store";
 import { ChevronDownIcon, MagnifyingGlassIcon, XMarkIcon } from '@heroicons/react/24/solid'
+
+import SunEditor from 'suneditor-react';
+import 'suneditor/dist/css/suneditor.min.css';
+
 import router from "../../router";
 
 
@@ -132,7 +136,6 @@ export default function UploadSong() {
 
   const handleDrop = (e) => {
     const files = e.dataTransfer.files;
-    console.log(files);
     input.current.files = files;
     labelRef.current.className = " flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600"
 
@@ -200,15 +203,14 @@ export default function UploadSong() {
           emphasize: 'UPLOAD SUCCESSFULLY',
           content: 'Your song has been uploaded'
         }]))
-        router.navigate('/')
+        // router.navigate('/')
       })
-      .catch(() => {
+      .catch((err) => {
         dispatchContext(actions.setNotificationPopup([{
           type: 'danger',
           emphasize: 'UPLOAD FAIL',
           content: 'Upload process fail, try later'
         }]))
-        router.navigate('/')
       })
   }
 
@@ -236,7 +238,6 @@ export default function UploadSong() {
         })
       })
       .catch((err) => {
-        console.log(err);
       })
 
     return () => controller.abort();
@@ -260,7 +261,7 @@ export default function UploadSong() {
                   name="name"
                   id="name"
                   placeholder="Name of your song"
-                  className="pl-4 w-full bg-gray-600 rounded-lg p-1 text-white"
+                  className="pl-4 w-full bg-[white] rounded-lg p-1 text-slate-700"
                   onChange={(e) => {
                     dispatch({
                       type: 'setName',
@@ -272,31 +273,30 @@ export default function UploadSong() {
               </div>
               <div className="w-full">
                 <label htmlFor="lyrics" className="text-[25px] font-mono font-bold text-white">Lyrics: </label>
-                <input
-                  type="text"
-                  name="lyrics"
-                  id="lyrics"
-                  placeholder="Lyrics"
-                  className="pl-4 w-full bg-gray-600 rounded-lg p-1 text-white"
+                <SunEditor
+                  height="200px"
+                  setDefaultStyle="font-family: cursive; font-size: 20px;"
+                  value={state.lyrics}
                   onChange={(e) => {
                     dispatch({
                       type: 'setLyrics',
-                      payload: e.target.value
+                      payload: e
                     })
                   }}
-                  autoComplete='off'
                 />
               </div>
-              <div className="w-full">
-                <label htmlFor="image" className="text-[25px] font-mono font-bold text-white">Image: </label>
-                <input type="file" name="image" id="image" accept="image/*" className="w-full bg-gray-600 rounded-lg p-1 text-white"
-                  onChange={handleChangeImage}
-                  autoComplete='off'
-                />
+              <div className="w-full flex gap-6">
+                <div className="w-1/2">
+                  <label htmlFor="image" className=" text-[25px] font-mono font-bold text-white">Image: </label>
+                  <input type="file" name="image" id="image" accept="image/*" className="w-full bg-gray-600 rounded-lg p-1 text-white"
+                    onChange={handleChangeImage}
+                    autoComplete='off'
+                  />
+                </div>
                 {
                   state.image ?
                     <img src={state.image}
-                      className={`h-80 w-72 object-cover rounded-xl hover:scale-[102%] duration-200`} />
+                      className={`h-36 w-36 object-cover rounded-xl hover:scale-[102%] duration-200`} />
                     : <>
                     </>
                 }

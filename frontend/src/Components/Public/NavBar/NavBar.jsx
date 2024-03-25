@@ -31,16 +31,11 @@ function classNames(...classes) {
 }
 
 function Example() {
-  const [currentUser, setCurrentUser] = useState();
-  const [state, dispatch] = useStore()
-
-  useEffect(() => {
-    setCurrentUser(state.currentUserID)
-  }, [state.currentUserID])
-
+  const currentUser = localStorage.getItem('USERID')
+  
   return (
     <>
-      <div className=" max-w-full px-2 sm:px-6 lg:px-8 bg-slate-800 sticky top-0 z-40 border-b border-slate-700">
+      <div className=" max-w-full px-2 sm:px-6 lg:px-8 bg-[black] sticky top-0 z-40 border-b border-slate-700">
         <div className="relative flex h-20 items-center justify-between">
           <div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
             <div className="flex flex-shrink-0 items-center">

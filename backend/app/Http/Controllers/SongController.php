@@ -62,23 +62,10 @@ class SongController extends Controller
     public function upload(Request $request)
     {
 
-
         try {
             $user = Auth::user();
-
-            if ($request->file('imageFile')) {
-                $imageFile = $request->file('imageFile');
-                $imageName = time() . '.' . $imageFile->extension();
-            }
-
-            if ($request->file('songFile')) {
-                $songFile = $request->file('songFile');
-                $songName = time() . '.' . $songFile->extension();
-            }
-
-            $arrayID = $request->artistsID;
-            $artistID = array_map('intval', $arrayID);
-
+            $imageName = time() . '.' . $request->file('imageFile')->extension();
+            $songName = time() . '.' . $request->file('songFile')->extension();
             date_default_timezone_set("Asia/Ho_Chi_Minh");
 
             $seconds = $request->duration;
@@ -99,23 +86,31 @@ class SongController extends Controller
                 'updated_at' => date("Y/m/d H:i:s"),
             ]);
 
-            $song->artists()->attach($artistID);
+            $song->artists()->attach($request->artistsID);
 
-            if ($song) {
-                $songPath = public_path() . '/storage/songs';
-                $songFile->move($songPath, $songName);
+            $songPath = public_path() . '/storage/songs';
+            $imagePath = public_path() . '/storage/images';
 
-                $imagePath = public_path() . '/storage/images';
-                $imageFile->move($imagePath, $imageName);
+            // Move uploaded files with better error handling
+            $movedImage = $request->file('imageFile')->move($imagePath, $imageName);
+            $movedSong = $request->file('songFile')->move($songPath, $songName);
 
-                Auth::user()->notify(new SongPending($song));
-                $admins = User::role('Admin')->get();
-                Notification::send($admins, new SongPending(($song)));
+            if (!$movedImage || !$movedSong) {
+                throw new \Exception('Failed to move uploaded files.');
             }
+
+            Auth::user()->notify(new SongPending($song));
+            $admins = User::role('Admin')->get();
+            Notification::send($admins, new SongPending(($song)));
 
             return response()->json($song);
         } catch (\Throwable $th) {
-            return $th;
+            DB::table('artist_have_songs')->where('song_id', $song->id)->delete();
+            $song->delete();
+            return response()->json([
+                'status' => false,
+                'message' => $th->getMessage()
+            ], 500);
         }
     }
 
@@ -124,8 +119,15 @@ class SongController extends Controller
      */
     public function show(string $id)
     {
+        $userId = Auth::id();
+
         $song = Song::find($id);
-        return response()->json($song);
+        $song->artists;
+        $song->views = $song->views();
+        if ($song->isFollowed()) {
+            $song->followed = $song->isFollowed();
+        }
+        return $song;
     }
 
     /**
@@ -173,7 +175,7 @@ class SongController extends Controller
                 'user_id' => $userId,
                 'song_id' => $songId,
                 'created_at' => date("Y/m/d H:i:s"),
-                'action_type_id' => 2,
+                'action_type_id' => 3,
             ]);
             return response()->json([
                 'status' => true,

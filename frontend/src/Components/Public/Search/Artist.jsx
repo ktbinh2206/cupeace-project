@@ -23,9 +23,14 @@ export default function Artist({ artists }) {
   return (
     <div className="flex flex-wrap gap-3 pt-4">
       {
-        artists?.map((artist) => (
-          <ArtistCard key={artist.id} artist={artist} />
-        ))
+        artists.length ?
+          artists?.map((artist) => (
+            <ArtistCard key={artist.id} artist={artist} />
+          ))
+          :
+          <div className="text-slate-600 font-semibold text-2xl text-center w-full">
+            No artist match
+          </div>
       }
     </div>
   )

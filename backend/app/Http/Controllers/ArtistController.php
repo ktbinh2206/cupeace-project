@@ -102,10 +102,17 @@ class ArtistController extends Controller
     }
     public function profile(Request $request)
     {
+        $userId = Auth::id();
+
         $artistId = $request->query('id');
         $artist = Artist::find($artistId);
+
+
+
+        $artist->songs = $artist->songs()->where('song_status_id', 1)->get();
         $artist->views = $artist->totalViews();
-        $artist->songs;
+        $artist->followers = $artist->followers();
+
         foreach ($artist->songs as $song) {
             $song->views = $song->views();
         }

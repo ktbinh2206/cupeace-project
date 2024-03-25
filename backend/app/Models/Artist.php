@@ -43,6 +43,18 @@ class Artist extends Model
         return $total;
     }
 
+    public function followers()
+    {
+        $total = 0;
+
+        $total = DB::table('user_song_actions')
+            ->where('song_id', $this->id)
+            ->where('action_type_id', 3)
+            ->count();
+
+        return $total;
+    }
+
     public function toSearchableArray()
     {
         return [

@@ -118,8 +118,13 @@ export default function SongDetails({ openSongDetails, setOpenSongDetails, song 
               <td className="flex gap-2"><span className="font-bold">:</span>{song?.desription}</td>
             </tr>
             <tr className="">
-              <td className="font-bold">Lyrics</td>
-              <td className="flex gap-2"><span className="font-bold">:</span>{song?.lyrics}</td>
+              <td className="font-bold" style={{ verticalAlign: 'top' }} >
+                Lyrics
+              </td>
+              <td className="flex gap-2"><span className="font-bold">:</span>
+                <div dangerouslySetInnerHTML={{ __html: song?.lyrics }}>
+                </div>
+              </td>
             </tr>
           </tbody>
         </table>

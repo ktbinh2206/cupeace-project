@@ -13,7 +13,7 @@ class SearchController extends Controller
         $searchValue = $request->query('q');
 
         $songs_query = Song::query();
-        $songs_query = Song::search($searchValue);
+        $songs_query = Song::search($searchValue)->where('song_status_id', 1);
         $songs = $songs_query->get();
         foreach ($songs as $song) {
             $song->artists;

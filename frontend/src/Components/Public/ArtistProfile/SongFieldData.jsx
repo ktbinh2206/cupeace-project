@@ -4,11 +4,27 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { actions, useStore } from "../../../store";
 
+//  * Example:
+//  *  - Input: "01:02:03"
+//  *  - Output: "01:02"
+//  *
+//  *  - Input: "00:02:03"
+//  *  - Output: "02:03"
+//  */
 function formatTime(time) {
   const [hh, mm, ss] = time.split(':');
   return `${hh !== '00' ? hh : ''}${mm}:${ss}`;
 }
 
+// Formatting function for displaying view count with a '.' as a thousand separator.
+// This function uses Regular Expression (RegEx) to replace every 3rd digit from the right
+// (except for the last group of 3 digits) with a '.' character to make the number easier to read.
+//
+// Example:
+//   formatViews(1000000)  // returns '1.000.000'
+//   formatViews(1500)   // returns '1.500'
+//   formatViews(5000)   // returns '5.000'
+//
 function formatViews(view) {
   return view.toString().replace(/\B(?=((\d{3})*(\d{3}))+(?!\d))/g, '.');
 }
@@ -32,7 +48,9 @@ const SongItem = ({ song = null, index }) => {
         <div className="flex items-center">
           <div className="mr-2 flex-shrink-0 sm:mr-3 w-14 h-14">
             <img className=" object-cover rounded-xl w-14 h-14" src={`${import.meta.env.VITE_GET_IMAGE_URL}/${song?.image}`} />
-            <Tooltip content="Play Song"
+            <Tooltip
+              className="bg-[#000000d0]"
+              content="Play Song"
               placement="top"
               animate={{
                 mount: { scale: 1, y: 0 },

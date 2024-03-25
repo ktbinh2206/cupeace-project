@@ -30,6 +30,15 @@ class Song extends Model
         return $total;
     }
 
+    public function isFollowed()
+    {
+        $song = DB::table('user_song_actions')
+            ->where('song_id', '=', $this->id)
+            ->where('action_type_id', '=', 3)
+            ->exists();
+        return $song;
+    }
+
     public function toSearchableArray()
     {
         return [

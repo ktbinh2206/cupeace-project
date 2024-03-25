@@ -7,7 +7,7 @@ import router from "../../../router";
 
 
 
-const Profile = memo(() => {
+const Profile = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const closeMenu = () => setIsMenuOpen(false);
@@ -38,7 +38,7 @@ const Profile = memo(() => {
       axiosClient
         .get('/user')
         .then(({ data }) => {
-          setUser(data[0])
+          setUser(data)
         })
         .catch((err) => {
           console.log(err);
@@ -91,7 +91,7 @@ const Profile = memo(() => {
           />
         </Button>
       </MenuHandler>
-      <MenuList className="p-2 z-50">
+      <MenuList className="p-2 z-50 bg-slate-700">
         {profileMenuItems.map(({ label, icon }, key) => {
           const isLastItem = key === profileMenuItems.length - 1;
           return (
@@ -116,13 +116,13 @@ const Profile = memo(() => {
 
                 }
               }}
-              className={`flex items-center gap-4 rounded ${isLastItem
+              className={`flex items-center gap-4 rounded text-white ${isLastItem
                 ? "hover:bg-red-500/10 focus:bg-red-500/10 active:bg-red-500/10"
                 : "hover:bg-blue-500/10 focus:bg-blue-500/10 active:bg-blue-500/10 "
                 }`}
             >
               {createElement(icon, {
-                className: `h-6 w-6 mt-3 mb-3  ${isLastItem ? "text-red-500" : "text-[#232a66] "}`,
+                className: `h-6 w-6 mt-3 mb-3  ${isLastItem ? "text-red-500" : "text-[white] "}`,
                 strokeWidth: 2,
               })}
               <Typography
@@ -139,6 +139,6 @@ const Profile = memo(() => {
       </MenuList>
     </Menu>
   );
-})
+}
 
 export default Profile

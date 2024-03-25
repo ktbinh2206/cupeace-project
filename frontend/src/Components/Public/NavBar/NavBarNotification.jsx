@@ -59,7 +59,7 @@ const calculateDuration = (currentDate) => {
   return result
 }
 
-const NotificationItems = memo(({ notification, setTotal }) => {
+const NotificationItems = ({ notification, setTotal }) => {
 
   const [isread, setIsread] = useState(notification.read_at == null ? false : true)
 
@@ -68,13 +68,14 @@ const NotificationItems = memo(({ notification, setTotal }) => {
     setIsread(true)
     let id = notification.id
 
+    if (!notification.read_at) {
+      setTotal(prev => prev - 1)
+    }
+    notification.read_at = true
     axiosClient
       .post('/user/notifications/read', { id })
       .then(({ data }) => {
-        if (notification.read_at == false) {
-          setTotal(prev => prev - 1)
-        }
-        notification.read_at = true
+        
       })
       .catch(err => {
         console.log(err);
@@ -82,14 +83,14 @@ const NotificationItems = memo(({ notification, setTotal }) => {
   }
 
   return (
-    <div className=" flex gap-2 items-center"
+    <div className=" flex gap-2 items-center "
       onClick={handleRead}
     >
       <Avatar
         variant="circular"
         size="sm"
         alt="tania andrew"
-        className="border rounded-full border-gray-900 p-0.5 h-10 w-10 hover:scale-105"
+        className="border rounded-full border-gray-900 p-0.5 h-10 w-10  min-h-10 min-w-10  hover:scale-105"
         src={`${import.meta.env.VITE_API_BASE_URL}` + '/get-image/' + `${notification.data.image}`}
       />
       <div>
@@ -103,7 +104,7 @@ const NotificationItems = memo(({ notification, setTotal }) => {
       </div>
     </div>
   )
-})
+}
 
 export default function NavBarNotification() {
 
