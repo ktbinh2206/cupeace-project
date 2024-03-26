@@ -31,13 +31,15 @@ function classNames(...classes) {
 }
 
 function Example() {
-  const currentUser = localStorage.getItem('USERID')
-  
+  const [state, dispatch] = useStore()
+
+  const currentUser = state.currentUserID
+
   return (
     <>
-      <div className=" max-w-full px-2 sm:px-6 lg:px-8 bg-[black] sticky top-0 z-40 border-b border-slate-700">
-        <div className="relative flex h-20 items-center justify-between">
-          <div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
+      <div className="w-screen min-w-[817px] bg-[black] sticky top-0 z-40 border-b border-slate-700 overflow-hidden">
+        <div className="w-full flex h-20 items-center justify-between">
+          <div className="flex flex-1 items-center justify-start pl-3">
             <div className="flex flex-shrink-0 items-center">
               <NavLink
                 to={'/'}>
@@ -48,7 +50,7 @@ function Example() {
                 />
               </NavLink>
             </div>
-            <div className="hidden sm:ml-6 sm:block">
+            <div className=" ml-6 block">
               <div className="flex space-x-4">
                 {navigation.map((item) => (
                   <NavLink
@@ -78,19 +80,19 @@ function Example() {
           </div>
 
 
-          <div className={`flex items-center  gap-5 ${currentUser ? '' : 'hidden'}`}>
+          <div className={`flex items-center  gap-5  pr-3 ${currentUser ? '' : 'hidden'}`}>
             <NavBarNotification />
             <Profile />
           </div>
 
-          <div className={`absolute inset-y-0 right-0 justify-between pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0 flex ${currentUser ? 'hidden' : ''}`}>
+          <div className={`justify-between  flex pr-3 ${currentUser ? 'hidden' : ''}`}>
             <NavLink to={"/login"}>
-              <Button className="h-10 mr-3 hover:bg-slate-700 hover:scale-105 ">
+              <Button className="h-10 mr-1 bg-transparent hover:scale-105 text-slate-400 hover:text-white ">
                 Login
               </Button>
             </NavLink>
             <NavLink to={"/signup"}>
-              <Button className="h-10 hover:bg-slate-700 hover:scale-105">Signup</Button>
+              <Button className="h-10 bg-white text-black hover:scale-[103%] rounded-full">Sign up</Button>
             </NavLink>
           </div>
 

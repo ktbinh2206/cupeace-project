@@ -115,6 +115,7 @@ class ArtistController extends Controller
 
         foreach ($artist->songs as $song) {
             $song->views = $song->views();
+            $song->artists;
         }
         return $artist;
     }

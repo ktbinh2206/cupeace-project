@@ -44,7 +44,7 @@ const Profile = () => {
           console.log(err);
         })
   }, [])
-
+  
   const handleLogout = e => {
     e.preventDefault();
     dispatch(actions.setCurrentSong())

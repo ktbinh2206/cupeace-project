@@ -30,7 +30,6 @@ export default function ArtistProfile() {
     axiosClient
       .get('/artist/profile?id=' + id)
       .then(({ data }) => {
-        console.log(data);
         setArtist(data);
       })
       .catch((err) => {

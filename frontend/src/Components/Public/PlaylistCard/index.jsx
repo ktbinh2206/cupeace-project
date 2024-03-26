@@ -5,7 +5,7 @@ import { actions, useStore } from "../../../store";
 import { Tooltip } from "@material-tailwind/react"
 import { Link } from "react-router-dom";
 import { PlayCircleIcon } from '@heroicons/react/24/solid'
-
+import "./style.css"
 export default function PlaylistCard({ song = null }) {
 
   const [state, dispatch] = useStore();
@@ -29,33 +29,47 @@ export default function PlaylistCard({ song = null }) {
   }
 
   return (
-    <div className="w-72 bg-slate-800 shadow-md rounded-xl hover:shadow-xl overflow-hidden hover:cursor-pointer  ">
-      {
-        song?.image ?
-          <img
-            loading={'lazy'}
-            src={`${import.meta.env.VITE_GET_IMAGE_URL}/` + song?.image}
-            className={`h-80 w-72 object-cover rounded-t-xl ${hovered && 'scale-[102%]'} duration-200`}
+    <div
+      className="
+      song-card
+    hover:bg-[#4444441f]
+     shadow-md rounded-xl hover:shadow-xl overflow-hidden hover:cursor-pointer  "
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}>
+      {/* Image */}
+      <div className=" relative w-full h-[70%]">
+        {
+          song?.image ?
+            <img
+              loading={'lazy'}
+              src={`${import.meta.env.VITE_GET_IMAGE_URL}/` + song?.image}
+              className={`w-full h-full object-cover rounded-t-lg`} />
+            :
+            <div className="w-full h-full object-cover rounded-t-lg"></div>
+        }
+        <Tooltip content="Play Song"
+          placement="top"
+          animate={{
+            mount: { scale: 1, y: 0 },
+            unmount: { scale: 0, y: 25 },
+          }}>
+          <PlayCircleIcon
+            onClick={handleClick}
+            className={`absolute
+           right-[6%] bottom-[-10px] h-16 w-16 text-[#4741B5]  hover:scale-105 active:text-[#2c2a5c] transform duration-300 ${hovered ? 'opacity-100 -translate-y-[10px]' : 'opacity-0'} `}
             onMouseEnter={() => setHovered(true)}
-            onMouseLeave={() => setHovered(false)} />
-          :
-          <div className="h-80 w-72 object-cover rounded-t-xl"></div>
-      }
-      <div
-        className={`translate-x-52 -translate-y-20 transform duration-100 ${hovered ? 'opacity-100' : 'opacity-0'} `}
-        onMouseEnter={() => setHovered(true)}
-      >
-        <PlayCircleIcon
-          onClick={handleClick}
-          className=" absolute h-16 w-16 text-[#4741B5]  hover:scale-105 active:text-[#2c2a5c] "
-        />
-      </div>
-      <div className="px-4 py-3 w-72">
-        <Tooltip content={song?.name}>
-          <Link to={'/song/' + song?.id} data-tooltip-target="tooltip-songname" className="text-xl font-bold text-white truncate block capitalize hover:text-[#5449DE]">{song?.name}</Link>
+          />
         </Tooltip>
-        <div className="flex items-center">
-          <p className="text-lg  text-neutral-400 cursor-auto my-3 ">
+      </div>
+      {/* Artist and Songs */}
+      <div className="px-2 py-3 w-full flex flex-col">
+        <Tooltip content={song?.name}>
+          <Link to={'/song/' + song?.id} data-tooltip-target="tooltip-songname" className="text-lg font-bold text-white truncate block capitalize hover:text-[#5449DE]">
+            {song?.name}
+          </Link>
+        </Tooltip>
+        <div className="">
+          <p className="text-base  text-neutral-400 cursor-auto my-3 ">
             {
               song?.artists.map((artist, index) => {
                 return (
@@ -67,6 +81,13 @@ export default function PlaylistCard({ song = null }) {
             }
           </p>
         </div>
+      </div>
+      {/* Play */}
+      <div
+        className={`translate-x-52 -translate-y-20 transform duration-100 ${hovered ? 'opacity-100' : 'opacity-0'} `}
+        onMouseEnter={() => setHovered(true)}
+      >
+
       </div>
     </div>
   )

@@ -63,6 +63,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/song/status', [SongController::class, 'getSongByStatusId']);
     Route::post('/song/upload', [SongController::class, 'upload']);
     Route::post('/song/stream', [SongController::class, 'stream']);
+    Route::get('/home/user', [SongController::class, 'homeForLoginedUser']);
 });
 
 
@@ -70,6 +71,7 @@ Route::post('/signup', [AuthController::class, 'signup'])->name('signup');
 Route::post('/login', [AuthController::class, 'login'])->name('login');
 
 Route::resource('/songs', SongController::class);
+Route::get('/home/guest', [SongController::class, 'homeForGuest']);
 Route::get('/songs/{id}/artists', [SongController::class, 'artists']);
 Route::get('/song/streams', [SongController::class, 'streams']);
 

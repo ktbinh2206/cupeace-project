@@ -1,7 +1,7 @@
 import { createBrowserRouter } from "react-router-dom";
 import Login from "./Components/Public/Login";
 import Signup from "./Components/Public/Signup";
-import Homepage from "./Components/Public/Homepage";
+import Homepage from "./Components/Public/Homepage/Homepage";
 import GuestLayout from "./Components/Layouts/GuestLayout";
 import Search from "./Components/Public/Search";
 import DefaultLayout from "./Components/Layouts/DefaultLayout";
@@ -58,14 +58,14 @@ const router = createBrowserRouter([
         element:
           <SongProfile />
       },
+      {
+        path: '/upload-song',
+        element:
+          <LoginedRoute>
+            <UploadSong />
+          </LoginedRoute>
+      },
     ]
-  },
-  {
-    path: '/upload-song',
-    element:
-      <LoginedRoute>
-        <UploadSong />
-      </LoginedRoute>
   },
   {
     path: '/',

@@ -7,17 +7,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Cupeace</title>
     <style>
-        body {
+        body,
+        html {
             margin: 0;
             padding: 0;
+            /* Hide body overflow */
             min-height: 100vh;
             /* Make sure the body takes up at least the full viewport height */
             background: #030714;
-            /* Your gradient colors */
+            min-width: 817px;
         }
 
         *::-webkit-scrollbar {
-            width: 10px;
+            width: 5px;
+            height: 4px;
         }
 
         *::-webkit-scrollbar-track {

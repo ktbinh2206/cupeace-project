@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Artist;
 use App\Models\Song;
 use App\Models\User;
 use App\Notifications\SongPending;
@@ -119,8 +120,6 @@ class SongController extends Controller
      */
     public function show(string $id)
     {
-        $userId = Auth::id();
-
         $song = Song::find($id);
         $song->artists;
         $song->views = $song->views();
@@ -305,7 +304,7 @@ class SongController extends Controller
             $history = DB::table('user_song_actions')
                 ->where('user_id', '=', $userId)
                 ->where('song_id', '=', $songId)
-                ->where('action_type_id', '=', 3)
+                ->where('action_type_id', '=', 1)
                 ->get();
 
             if (count($history) == 0) {
@@ -314,20 +313,20 @@ class SongController extends Controller
                     'song_id' => $songId,
                     'duration' => $duration,
                     'created_at' => date("Y/m/d H:i:s"),
-                    'action_type_id' => 3,
+                    'action_type_id' => 1,
                 ]);
             } else {
                 DB::table('user_song_actions')
                     ->where('user_id', '=', $userId)
                     ->where('song_id', '=', $songId)
-                    ->where('action_type_id', '=', 3)->delete();
+                    ->where('action_type_id', '=', 1)->delete();
 
                 DB::table('user_song_actions')->insert([
                     'user_id' => $userId,
                     'song_id' => $songId,
                     'duration' => $duration,
                     'created_at' => date("Y/m/d H:i:s"),
-                    'action_type_id' => 3,
+                    'action_type_id' => 1,
                 ]);
             }
             return 'Add success';
@@ -381,5 +380,61 @@ class SongController extends Controller
             }
         }
         return $songs;
+    }
+
+    // This function will send data to fronend to:
+    // serve homepage display
+    public function homeForLoginedUser(Request $request)
+    {
+        $userId = Auth::id();
+
+        //Recently Songs
+        $recentlyId = DB::table('user_song_actions')
+            ->where('user_id', '=', $userId)
+            ->where('action_type_id', '=', 1)
+            ->take(9)->orderBy('created_at', 'desc')->get(['song_id', 'created_at']);
+        $recentlySongs = Song::whereIn('id', $recentlyId->pluck('song_id'))->get();
+        foreach ($recentlySongs as $song) {
+            $song->artists;
+        }
+
+
+        //Popular Songs
+        $popularSongs = Song::where('song_status_id', 1)->get();
+        foreach ($popularSongs as $song) {
+            $song->artists;
+            $song->views = $song->views();
+        }
+        $popularSongs = $popularSongs->sortByDesc('views')->take(9)->values();
+
+        //Popular Artists
+        $artists = Artist::all();
+        foreach ($artists as $artist) {
+            $artist->views = $artist->totalViews();
+        }
+        $popularArtists = $artists->sortByDesc('views')->take(9)->values();
+
+        $data = (object)[
+            "recently_songs" => $recentlySongs,
+            "popular_artists" => $popularArtists,
+            "popular_songs" => $popularSongs,
+        ];
+        return $data;
+    }
+    public function homeForGuest(Request $request)
+    {
+
+        //Recently Songs
+        $songs = Song::where('song_status_id', 1)->take(9)->get();
+        foreach ($songs as $song) {
+            $song->artists;
+            $song->views = $song->views();
+        }
+
+        $songs = $songs->sortByDesc('views')->values();
+
+        return response()->json([
+            'popular_songs' => $songs
+        ]);
     }
 }

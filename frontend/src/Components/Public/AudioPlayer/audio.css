@@ -1,0 +1,31 @@
+@keyframes marquee {
+  0% {
+    transform: translateX(0%);
+  }
+  50% {
+    transform: translateX(var(--translateValue));
+  }
+  100% {
+    transform: translateX(0%);
+  }
+}
+
+/* Adjust other styles as needed */
+.marquee {
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.marquee-content {
+  display: inline-block;
+  animation-name: marquee;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+}
+.song-name-width {
+  max-width: calc(80%);
+  min-width: 121px;
+  white-space: nowrap; /* Prevent wrapping */
+  overflow: hidden; /* Hide overflowing content */
+  text-overflow: ellipsis;
+}

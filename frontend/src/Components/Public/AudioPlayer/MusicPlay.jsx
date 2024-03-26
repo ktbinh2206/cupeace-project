@@ -4,10 +4,13 @@ import VolumeMuteIcon from "@mui/icons-material/VolumeMute"
 import VolumeDownIcon from "@mui/icons-material/VolumeDown"
 import VolumeUpIcon from "@mui/icons-material/VolumeUp"
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { Slider } from "@mui/material";
-import { actions, useStore } from "../../store";
-import axiosClient from "../../axios";
+import { actions, useStore } from "../../../store";
+import axiosClient from "../../../axios";
+import { Link } from "react-router-dom";
+
+import "./audio.css"
 
 function OutlineHeart() {
   return (<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 hover:scale-105 hover:cursor-pointer active:scale-100">
@@ -94,11 +97,13 @@ function FollowButton() {
     <div>{
       state.currentSong?.id ?
         isFollowed == true
-          ? <div onClick={handleUnfollow}>
+          ? <div onClick={handleUnfollow}
+            className="text-blue-50">
             <SolidHeart />
           </div>
           :
-          <div onClick={handleFollow}>
+          <div onClick={handleFollow}
+            className="text-blue-50">
             <OutlineHeart />
           </div>
         :
@@ -160,8 +165,8 @@ export default function MusicPlay() {
   }, [volume, audioPlayer]);
 
   useEffect(() => {
-    let finalDuration = (totalTime + streamingTime);
 
+    let finalDuration = (totalTime + streamingTime);
     if (state?.currentSong?.link) {
       audioPlayer.current.src = `${import.meta.env.VITE_GET_SONG_URL}/` + state?.currentSong?.link; // Update audio source when currentSong changes
       setIsPlaying(true); // Start playing
@@ -169,7 +174,6 @@ export default function MusicPlay() {
     }
 
     setTimestamp(0)
-    setTotalTime(0)
     return () => {
       if (finalDuration > 30) {
         axiosClient
@@ -180,8 +184,8 @@ export default function MusicPlay() {
           .catch(err => {
             console.log(err);
           })
-        console.log('Check duration: ' + finalDuration > 2);
       }
+      setTotalTime(0)
     }
   }, [state.currentSong?.id, state.currentSong?.link, state.currentSong?.name]);
 
@@ -225,33 +229,124 @@ export default function MusicPlay() {
     setTotalTime(prev => prev + streamingTime)
   }
 
+  const marqueeRef = useRef(null)
+
+  const handleMouseEnter = () => {
+    // Pause the animation on hover
+    marqueeRef.current.querySelector('.marquee-content').style.animationPlayState = 'paused';
+  };
+
+  const handleMouseLeave = () => {
+    // Resume the animation when mouse leaves
+    marqueeRef.current.querySelector('.marquee-content').style.animationPlayState = 'running';
+  };
+
+  const [windowSize, setWindowSize] = useState({
+    width: window.innerWidth,
+    height: window.innerHeight
+  });
+
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowSize({
+        width: window.innerWidth,
+        height: window.innerHeight
+      });
+    };
+
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+
+
+  useLayoutEffect(() => {
+    if (marqueeRef.current) {
+      let containerWidth = marqueeRef.current.offsetWidth;
+      let contentElement = marqueeRef.current.querySelector('.marquee-content');
+
+      if (contentElement) {
+        let contentWidth = contentElement.offsetWidth;
+        if (contentWidth > containerWidth - 8) {
+          let translateValue = ((1 - (containerWidth / contentWidth)) * 100) + 7;
+          let duration = translateValue * 0.5;
+
+          // Apply animation properties
+          contentElement.style.animationDuration = duration + 's';
+          contentElement.style.setProperty('--translateValue', `-${translateValue}%`);
+          contentElement.style.animationPlayState = 'running'; // Play animation
+
+          // Add event listeners to pause and resume animation on hover
+          marqueeRef.current.addEventListener('mouseenter', handleMouseEnter);
+          marqueeRef.current.addEventListener('mouseleave', handleMouseLeave);
+        } else {
+          // Remove animation properties
+          contentElement.style.animationDuration = 'initial';
+          contentElement.style.removeProperty('--translateValue');
+          contentElement.style.animationPlayState = 'paused'; // Pause animation
+        }
+      }
+    }
+
+    // Cleanup event listeners
+    return () => {
+      marqueeRef.current.removeEventListener('mouseenter', handleMouseEnter);
+      marqueeRef.current.removeEventListener('mouseleave', handleMouseLeave);
+    };
+
+  }, [windowSize]);
+
   return (
     <>
       <audio src={src} ref={audioPlayer} muted={mute} onTimeUpdate={timeUpdate} />
-      <div id="music-play" className="flex items-center justify-between h-32 w-full fixed bottom-0 bg-[black] border-t border-gray-400">
-        <div className="left-item text-white w-1/5 pl-6 flex justify-between items-center">
-          {state?.currentSong?.image ?
-            <div className="flex items-center  gap-5">
-              <img src={image || ``}
-                alt="" className="h-1/2 w-20 object-cover rounded-xl hover:scale-[102%] duration-200" />
-              <div className="font-bold">{state?.currentSong?.name}</div>
+      <div id="music-play" className="flex justify-between min-w-[817px] items-center h-20 w-screen fixed bottom-0 bg-[black] border-t border-slate-600">
+        <div className="item-left flex-shrink-0 basis-[33.33%] h-full max-w-1/3 py-2 pl-5">
+
+          <div className="h-full w-full flex items-center p">
+            <img src={image || ``}
+              alt="" className="h-[80%] aspect-square object-cover rounded-md  duration-200" />
+            {/* Song and Artist */}
+            <div className="h-full px-2 flex gap-1 flex-col  song-name-width justify-center">
+              {/* Song Name */}
+              <div className="font-bold text-white w-full overflow-hidden">
+                <div className="marquee w-full mx-2"
+                  ref={marqueeRef}>
+                  <Link to={'/song/' + state?.currentSong?.id}>
+                    <span className="marquee-content hover:underline hover:cursor-pointer">
+                      {state?.currentSong?.name}
+                    </span>
+                  </Link>
+                </div>
+              </div>
+              <div className="text-slate-400 text-sm mx-2">
+                {state?.currentSong?.artists &&
+                  state?.currentSong?.artists.map((artist, index) => {
+                    return (
+                      <Link to={'/artist/' + artist?.id} key={index} className="hover:underline">{artist.name}{
+                        state?.currentSong?.artists.length - 1 === index ? `` : `, `}</Link>
+                    )
+                  })
+                }
+              </div>
             </div>
-            :
-            <span className="text-3xl">--:--</span>
-          }
-          <FollowButton />
+            <div className="">
+              <FollowButton />
+            </div>
+          </div>
         </div>
-        <div className="center-item text-white h-full w-2/5 ">
-          <div className="h-20 flex justify-center items-center gap-4 mt-2">
+        <div className="flex flex-col item-center py-2 h-full flex-shrink-0 basis-[33.33%]">
+          <div className=" flex justify-center items-center gap-4">
             <div className="flex flex-grow justify-end">
               <div className="backward">
-                <button className="w-16">
+                <button className="w-10 aspect-square text-white">
                   <BackwardIcon className="transition-all transform hover:scale-105 active:scale-95" />
                 </button>
               </div>
             </div>
-            <div className="basis-16 mt-2">
-              <button className="w-full" onClick={() => isPlaying ? setIsPlaying(false) : setIsPlaying(true)}>
+            <div className="">
+              <button className="w-10 aspect-square text-white" onClick={() => isPlaying ? setIsPlaying(false) : setIsPlaying(true)}>
 
                 {!isPlaying
                   ? <PlayCircleIcon className="transition-all transform hover:scale-110" onClick={togglePlay} />
@@ -262,34 +357,62 @@ export default function MusicPlay() {
             </div>
             <div className="flex flex-grow">
               <div className="forward">
-                <button className="w-16">
+                <button className="w-10 aspect-square text-white">
                   <ForwardIcon className="transition-all transform hover:scale-105 active:scale-95" />
                 </button>
               </div>
             </div>
           </div>
-          <div className="w-full flex gap-4 mb-8">
-            <div className="flex-grow text-center">
+          <div className="w-full flex gap-4 ">
+            <div className=" text-white text-center">
               {calculateTime(elapsed)}
             </div>
-            <div className="basis-9/12 flex items-center justify-center">
+            <div className="flex-grow mb-10">
               <Slider
-                type="range"
+                aria-label="time-indicator"
+                size="small"
                 value={isNaN(elapsed) ? 0 : elapsed}
                 max={isNaN(duration) ? 0 : duration}
                 defaultValue={0}
-                ref={progressBar}
-                onChange={handleProgressChange} />
+                onChange={handleProgressChange}
+                sx={{
+                  color: '#fff',
+                  height: 4,
+                  '& .MuiSlider-thumb': {
+                    width: 8,
+                    height: 8,
+                    transition: '0.3s cubic-bezier(.47,1.64,.41,.8)',
+                    '&::before': {
+                      boxShadow: '0 2px 12px 0 rgba(0,0,0,0.4)',
+                    },
+                    '&:hover, &.Mui-focusVisible': {
+                      boxShadow:
+                        'rgb(255 255 255 / 16%)'
+                      ,
+                    },
+                    '&.Mui-active': {
+                      width: 20,
+                      height: 20,
+                    },
+                  },
+                  '& .MuiSlider-rail': {
+                    opacity: 0.28,
+                  },
+                }}
+              />
             </div>
-            <div className="flex-grow text-center">
+            <div className="text-white text-center">
               {calculateTime(duration)}
             </div>
           </div>
         </div>
-
-        <div className="w-1/5 pl-9 right_item text-white flex items-center gap-3 mr-10">
-          <VolumeBtns />
-          <Slider style={SliderStyles} aria-label="Volume" value={volume} onChange={(e, v) => setVolume(v)} />
+        <div className="flex items-center justify-center item-right flex-shrink-0 basis-[33.33%]">
+          <div className="text-white">
+            <VolumeBtns className="text-white" />
+          </div>
+          <div className="flex items-center">
+            <Slider style={SliderStyles} aria-label="Volume" value={volume} onChange={(e, v) => setVolume(v)} />
+          </div>
         </div>
       </div>
     </>
