@@ -12,8 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('song_have_categories', function (Blueprint $table) {
-            $table->foreignId('song_id')->constrained();
-            $table->foreignId('category_id')->constrained();
+            $table->foreignId('song_id')->constrained()->cascadeOnDelete();;
+            $table->foreignId('category_id')->constrained()->cascadeOnDelete();
             $table->timestamps();
         });
     }

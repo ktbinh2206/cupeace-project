@@ -43,6 +43,7 @@ class SongController extends Controller
                 ->count();
             $account = User::find($song->upload_by);
             $song->artists;
+            $song->categories;
             $song->views = $total;
             $song->upload_by = $account;
         }
@@ -88,6 +89,7 @@ class SongController extends Controller
             ]);
 
             $song->artists()->attach($request->artistsID);
+            $song->categories()->attach($request->categoriesID);
 
             $songPath = public_path() . '/storage/songs';
             $imagePath = public_path() . '/storage/images';
@@ -100,7 +102,10 @@ class SongController extends Controller
                 throw new \Exception('Failed to move uploaded files.');
             }
 
+            //Send notification to upload user
             Auth::user()->notify(new SongPending($song));
+
+            //Send to Admin
             $admins = User::role('Admin')->get();
             Notification::send($admins, new SongPending(($song)));
 

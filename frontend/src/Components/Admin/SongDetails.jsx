@@ -118,6 +118,18 @@ export default function SongDetails({ openSongDetails, setOpenSongDetails, song 
               <td className="flex gap-2"><span className="font-bold">:</span>{song?.desription}</td>
             </tr>
             <tr className="">
+              <td className="font-bold">Description</td>
+              <td className="flex gap-2"><span className="font-bold">:</span>
+                {song?.categories?.map((category, index) => {
+                  return (
+                    <span key={index}>{category.name}{
+                      song?.categories.length - 1 === index ? `` : `, `}</span>
+                  )
+                }
+                )}
+              </td>
+            </tr>
+            <tr className="">
               <td className="font-bold" style={{ verticalAlign: 'top' }} >
                 Lyrics
               </td>

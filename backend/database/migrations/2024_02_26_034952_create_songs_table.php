@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('description')->nullable();
             $table->string('link');
             $table->time('duration')->nullable();
-            $table->foreignId('upload_by')->constrained('users', 'id')->onDelete('cascade');
+            $table->foreignId('upload_by')->constrained('users', 'id');
             $table->foreignId('song_status_id')->constrained('song_statuses', 'id')->onDelete('cascade');
             $table->timestamps();
         });

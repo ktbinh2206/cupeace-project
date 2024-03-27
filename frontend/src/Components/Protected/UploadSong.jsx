@@ -9,6 +9,7 @@ import SunEditor from 'suneditor-react';
 import 'suneditor/dist/css/suneditor.min.css';
 
 import router from "../../router";
+import { Link } from "react-router-dom";
 
 
 const initArg = {
@@ -20,6 +21,7 @@ const initArg = {
   lyrics: '',
   description: '',
   artistsID: [],
+  categoriesID: [],
   artists: null,
   inputValue: "",
   selected: [],
@@ -49,21 +51,25 @@ function reducer(state, action) {
         ...state,
         imageFile: action.payload
       }
-    case 'setName': // Add this case
+    //Set Name
+    case 'setName':
       return {
         ...state,
         name: action.payload
       };
-    case 'setLyrics': // Add this case
+    //Set Lyrics
+    case 'setLyrics':
       return {
         ...state,
         lyrics: action.payload
       };
-    case 'setDescription': // Add this case
+    //Set Description
+    case 'setDescription':
       return {
         ...state,
         description: action.payload
       };
+    //get Total arists
     case 'setArtists':
       return {
         ...state,
@@ -74,23 +80,39 @@ function reducer(state, action) {
         ...state,
         inputValue: action.payload
       };
+    //set Selected Card and add to state ArtistsID
     case 'setSelected':
       return {
         ...state,
         selected: [...state.selected, action.payload],
         artistsID: [...state.artistsID, action.payload.id]
       };
+    //Add category ID
+    case 'setCategoriesID':
+      return {
+        ...state,
+        categoriesID: [...state.categoriesID, action.payload.id]
+      };
+    //remove selected category
+    case 'removeSelectedCategory':
+      return {
+        ...state,
+        categoriesID: state.categoriesID.filter(id => id !== action.payload),
+      };
+    //get artist Id of user and set as default artist
     case 'setCurrentArtistID':
       return {
         ...state,
         artistsID: [action.payload]
       };
+    //remove selected artist and also remove state artistsID
     case 'removeSelected':
       return {
         ...state,
         selected: state.selected.filter(artist => artist.id !== action.payload),
         artistsID: state.artistsID.filter(id => id !== action.payload),
       };
+    //Open Artist field
     case 'setOpen':
       return {
         ...state,
@@ -101,7 +123,6 @@ function reducer(state, action) {
         ...state,
         duration: action.payload
       };
-
     default:
       return state;
   }
@@ -111,9 +132,16 @@ function SelectedCard({ dispatch, artist }) {
   return (
     <>
       <div className="border flex items-center rounded-md p-1 gap-1 font-bold">
-        {artist?.name}
+        <Link to={'/artist/' + artist?.id}
+          target="_blank"
+          rel="noreferrer noopener"
+          className="hover:underline"
+        >
+          {artist?.name}
+        </Link>
         <XMarkIcon className="h-4 w-4 hover:cursor-pointer hover:scale-105"
-          onClick={() => {
+          onClick={(e) => {
+            e.stopPropagation();
             dispatch({
               type: 'removeSelected',
               payload: artist.id
@@ -123,6 +151,200 @@ function SelectedCard({ dispatch, artist }) {
     </>
   )
 }
+
+function ArtistSelect({ dispatch, state }) {
+  return (
+    <div className="w-full">
+      <label className="text-[25px] font-mono font-bold text-white">Artist Name</label>
+      <div
+        className=" flex justify-between gap-2 items-center pl-4 w-full bg-[#3c434d]  rounded-sm p-1 text-white "
+        onClick={() => dispatch({
+          type: 'setOpen'
+        })}
+      >
+
+        {state?.selected.length > 0
+          ?
+          <div className="flex gap-1 flex-wrap">
+            {
+              state?.selected.map((artist) => (
+                <SelectedCard key={artist?.id} dispatch={dispatch} artist={artist} />
+              ))
+            }
+          </div>
+          : <>Select your featured artist</>
+        }
+        <ChevronDownIcon
+          className={`h-7 w-7 font-bold mr-2 ${state.open && 'rotate-180 transform duration-150'} ${!state.open && 'transform duration-150'} hover:cursor-pointer`}
+        />
+      </div>
+      <ul className={`bg-[#3c434d]  mt-2 rounded-lg  overflow-y-auto ${state.open
+        ? 'max-h-60'
+        : 'max-h-0'}`}>
+        <div className="flex sticky top-0  bg-[#3c434d]  ">
+          <MagnifyingGlassIcon className="text-white w-6 h-6 m-2 " />
+          <input
+            type="text"
+            placeholder="Enter your artist ..."
+            className="text-white bg-[#3c434d]  p-2 outline-none placeholder:text-white w-full"
+            value={state.inputValue}
+            onChange={e => {
+              dispatch({
+                type: 'setInputValue',
+                payload: e.target.value
+              })
+            }}
+          />
+        </div>
+        {state.artists?.map((artist) => (
+
+          <li
+            key={artist.id}
+            className={`p-2 pl-5 font-semibold text-sm hover:bg-slate-600 text-slate-200
+                      ${state.selected.some(selectedArtist => selectedArtist.id === artist.id) && 'hidden'}
+                      ${(artist?.name?.toLowerCase().startsWith(state.inputValue.toLowerCase()))
+                ? "block"
+                : "hidden"
+              }`}
+            onClick={() => {
+              dispatch({
+                type: 'setSelected',
+                payload: artist,
+              })
+              dispatch({
+                type: 'setInputValue',
+                payload: ""
+              })
+            }}
+          >
+            {artist.name}
+          </li>
+        ))}
+      </ul>
+    </div>
+  )
+}
+
+function CategorySelectedCard({ dispatch, setSelected, selected, category }) {
+  return (
+    <>
+      <div className="border flex items-center rounded-md p-1 gap-1 font-bold z-10">
+
+        {category?.name}
+        <XMarkIcon className="h-4 w-4 hover:cursor-pointer hover:scale-105"
+          onClick={(e) => {
+            e.stopPropagation();
+            setSelected(selected.filter(selected => selected.id !== category?.id),)
+            dispatch({
+              type: 'removeSelectedCategory',
+              payload: category.id
+            })
+          }}
+        />
+      </div>
+    </>
+  )
+}
+
+function CategorySelect({ state, dispatch }) {
+  const [open, setOpen] = useState(false)
+  const [searchKey, setSearchKey] = useState('')
+  const [categories, setCategories] = useState()
+  const [selected, setSelected] = useState([])
+
+  useEffect(() => {
+    const delayDebounceFn = setTimeout(() => {
+
+      if (searchKey.trim()) {
+        axiosClient
+          .get('/categories/search?q=' + searchKey.trim())
+          .then(({ data }) => {
+            setCategories(data)
+          })
+          .catch(err => {
+            console.log(err);
+          })
+      } else {
+        setCategories(null)
+      }
+    }, 500);
+
+    return () => clearTimeout(delayDebounceFn)
+
+  }, [searchKey])
+
+  return (
+    <>
+      <div className="w-full">
+        <label className="text-[25px] font-mono font-bold text-white">Song Category<span className="text-[20px]"></span></label>
+        <div
+          className=" flex justify-between gap-2 items-center pl-4 w-full bg-[#3c434d]  rounded-sm p-1 text-white "
+          onClick={() => { setOpen(prev => !prev) }}
+        >
+
+          {selected?.length > 0
+            ?
+            <div className="flex gap-1 flex-wrap">
+              {
+                selected?.map((category) => (
+                  <CategorySelectedCard key={category?.id} dispatch={dispatch} selected={selected} setSelected={setSelected} category={category} />
+                ))
+              }
+            </div>
+            : <>Let us know your song style ...</>
+          }
+          <ChevronDownIcon
+            className={`h-7 w-7 font-bold mr-2 ${open && 'rotate-180 transform duration-150'} ${!open && 'transform duration-150'} hover:cursor-pointer`}
+
+          />
+        </div>
+        <ul className={`bg-[#3c434d]  mt-2 rounded-lg  overflow-y-auto ${open
+          ? 'max-h-60'
+          : 'max-h-0'}`}>
+          <div className="flex sticky top-0  bg-[#3c434d] ">
+            <MagnifyingGlassIcon className="text-white w-6 h-6 m-2 " />
+            <input
+              type="text"
+              placeholder="Explore your style"
+              className="text-white bg-[#3c434d]  p-2 outline-none placeholder:text-white w-full"
+              value={searchKey}
+              onChange={e => {
+                setSearchKey(e.target.value)
+              }}
+            />
+          </div>
+          {categories?.map((category) => (
+
+            <li
+              key={category.id}
+              className={`p-2 pl-5 font-semibold text-sm hover:bg-slate-600 text-slate-200
+                      ${selected?.some(selected => selected.id === category.id) && 'hidden'}`}
+              onClick={(e) => {
+                setSelected([...selected, category])
+                setCategories(null)
+                setSearchKey('')
+                dispatch({
+                  type: 'setCategoriesID',
+                  payload: category,
+                })
+              }}
+            >
+              {category?.name}
+            </li>
+          ))}
+          {categories?.length == 0 && searchKey &&
+            (
+              <li
+                className="p-2 pl-5 font-semibold text-lg text-[#bccbdf] text-center">
+                We are updating your song style...
+              </li>
+            )}
+        </ul>
+      </div>
+    </>)
+
+}
+
 export default function UploadSong() {
   const input = useRef()
   const labelRef = useRef()
@@ -130,6 +352,16 @@ export default function UploadSong() {
 
   const [step, setStep] = useState(0);
 
+  const [errors, setErrors] = useState(
+    {
+      image: null,
+      name: null,
+      lyrics: null,
+      description: null,
+      songFile: null,
+      categoriesID: null,
+    }
+  )
 
   const [stateContext, dispatchContext] = useStore();
 
@@ -166,7 +398,6 @@ export default function UploadSong() {
     })
   };
 
-
   const handleChangeImage = (e) => {
     const files = e.target.files[0];
 
@@ -180,8 +411,16 @@ export default function UploadSong() {
       payload: files
     })
   };
+
+  const validateData = () => {
+    if (!state.name) {
+
+    }
+  }
+
   const handleSubmit = (e) => {
     e.preventDefault();
+
     axiosClient
       .post('/song/upload', {
         name: state.name,
@@ -191,6 +430,7 @@ export default function UploadSong() {
         songFile: state.songFile,
         uploadBy: stateContext.currentUserID,
         artistsID: state.artistsID,
+        categoriesID: state.categoriesID,
         duration: state.duration,
       },
         {
@@ -260,8 +500,10 @@ export default function UploadSong() {
                   <div>
                     <div className="flex-grow">
                       <div className="relative">
-                        <img src={state.image || defaultImage}
-                          className={`h-36 w-36 object-cover rounded-xl duration-200`} />
+                        <label htmlFor="image-song">
+                          <img src={state.image || defaultImage}
+                            className={`h-36 w-36 object-cover rounded-xl duration-200`} />
+                        </label>
                         <label
                           className="absolute w-10 aspect-square -right-2 -bottom-1 text-white bg-gray-600 rounded-full p-1
                                 hover:cursor-pointer hover:scale-105"
@@ -270,8 +512,8 @@ export default function UploadSong() {
                           <PencilSquareIcon className="w-full h-full" />
                         </label>
                       </div>
-                      <div className="w-1/2">
-                        <label htmlFor="image" className=" text-[25px] font-mono font-bold text-white">Image</label>
+                      <div className="w-full pl-3">
+                        <label htmlFor="image-song" className=" text-[25px] font-mono font-bold text-white">Image</label>
                         <input type="file" name="image" accept="image/*" className="hidden"
                           ref={imageRef}
                           id='image-song'
@@ -288,7 +530,7 @@ export default function UploadSong() {
                       name="name"
                       id="name"
                       placeholder="Name your song"
-                      className="pl-4 w-full bg-[white] rounded-lg p-1 text-slate-900"
+                      className="pl-4 w-full bg-[#3c434d] rounded-sm p-1 text-slate-100"
                       onChange={(e) => {
                         dispatch({
                           type: 'setName',
@@ -323,7 +565,7 @@ export default function UploadSong() {
                     name="description"
                     id="description"
                     placeholder="Description"
-                    className="pl-4 w-full bg-white rounded-lg p-1 text-white"
+                    className="pl-4 w-full bg-[#3c434d]  rounded-sm p-1 text-slate-100"
                     onChange={(e) => {
                       dispatch({
                         type: 'setDescription',
@@ -339,7 +581,7 @@ export default function UploadSong() {
                   <label
                     ref={labelRef}
                     htmlFor="dropzone-file"
-                    className="flex flex-col items-center justify-center w-full h-40 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600"
+                    className="flex flex-col items-center justify-center w-full h-40 hover:border-2 hover:border-slate-700 hover:border-dashed rounded-sm cursor-pointer bg-[#3c434d]  hover:bg-gray-100 "
                     onDrop={handleDrop}
                     onDragOver={handleDragOver}
                     onDragLeave={handleDragLeave}>
@@ -375,72 +617,8 @@ export default function UploadSong() {
             )}
             {step === 1 && (
               <>
-                <div className="w-full">
-                  <label className="text-[25px] font-mono font-bold text-white">Artist Name:<span className="text-[20px]">(Optional)</span></label>
-                  <div
-                    className=" flex justify-between gap-2 items-center pl-4 w-full bg-gray-600 rounded-lg p-1 text-white ">
-
-                    {state?.selected.length > 0
-                      ?
-                      <div className="flex gap-1 flex-wrap">
-                        {
-                          state?.selected.map((artist) => (
-                            <SelectedCard key={artist?.id} dispatch={dispatch} artist={artist} />
-                          ))
-                        }
-                      </div>
-                      : <>Select your featured artist</>
-                    }
-                    <ChevronDownIcon
-                      className={`h-7 w-7 font-bold mr-2 ${state.open && 'rotate-180 transform duration-150'} ${!state.open && 'transform duration-150'} hover:cursor-pointer`}
-                      onClick={() => dispatch({
-                        type: 'setOpen'
-                      })} />
-                  </div>
-                  <ul className={`bg-gray-500 mt-2 rounded-lg  overflow-y-auto ${state.open
-                    ? 'max-h-60'
-                    : 'max-h-0'}`}>
-                    <div className="flex sticky top-0  bg-gray-500">
-                      <MagnifyingGlassIcon className="text-white w-6 h-6 m-2 " />
-                      <input
-                        type="text"
-                        placeholder="Enter your artist ..."
-                        className="text-white bg-gray-500 p-2 outline-none placeholder:text-white w-full"
-                        value={state.inputValue}
-                        onChange={e => {
-                          dispatch({
-                            type: 'setInputValue',
-                            payload: e.target.value
-                          })
-                        }}
-                      />
-                    </div>
-                    {state.artists?.map((artist) => (
-
-                      <li
-                        key={artist.id}
-                        className={`p-2 pl-5 font-bold text-sm hover:bg-slate-400 hover:text-white
-                      ${state.selected.some(selectedArtist => selectedArtist.id === artist.id) && 'hidden'}
-                      ${(artist?.name?.toLowerCase().startsWith(state.inputValue.toLowerCase()))
-                            ? "block"
-                            : "hidden"
-                          }`}
-                        onClick={() => {
-                          dispatch({
-                            type: 'setSelected',
-                            payload: artist,
-                          })
-                          dispatch({
-                            type: 'setInputValue',
-                            payload: ""
-                          })
-                        }}
-                      >
-                        {artist.name}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
+                <ArtistSelect dispatch={dispatch} state={state} />
+                <CategorySelect dispatch={dispatch} state={state} />
               </>
             )}
 
@@ -452,13 +630,14 @@ export default function UploadSong() {
               )}
 
               {step === 0 && (
-                <button onClick={() => setStep(step + 1)} className="bg-[#5449DE] hover:bg-[#413bbb] active:bg-[#36309b] p-3 rounded-lg">
+                <button onClick={() => setStep(step + 1)} className=" text-white bg-[#5449DE] hover:bg-[#413bbb] active:bg-[#36309b] p-3 rounded-lg">
                   Next
                 </button>
               )}
 
               {step === 1 && (
-                <button type="submit" className="bg-[#5449DE] hover:bg-[#413bbb] active:bg-[#36309b] p-3 rounded-lg">
+                <button type="submit" className="
+               text-white bg-[#5449DE] hover:bg-[#413bbb] active:bg-[#36309b] p-3 rounded-lg">
                   Upload
                 </button>
               )}

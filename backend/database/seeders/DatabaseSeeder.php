@@ -15,19 +15,19 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
         $this->call([
-            RoleSeeder::class,
-            UserSeeder::class,
-            SongListTypeSeeder::class,
             ActionTypeSeeder::class,
-            SubscriptionStatusSeeder::class,
-            SubscriptionPlanSeeder::class,
-            PaymentMethodSeeder::class,
-            CategoryTypeSeeder::class,
-            CategorySeeder::class,
-            SongStatusSeeder::class,
-            SongSeeder::class,
-            ArtistSeeder::class,
             ArtistHasSongsSeeder::class,
+            ArtistSeeder::class,
+            CategorySeeder::class,
+            PaymentMethodSeeder::class,
+            RoleSeeder::class,
+            SongHasCategoriesSeeder::class,
+            SongListTypeSeeder::class,
+            SongSeeder::class,
+            SongStatusSeeder::class,
+            SubscriptionPlanSeeder::class,
+            SubscriptionStatusSeeder::class,
+            UserSeeder::class,
             UserSongActionSeeder::class,
         ]);
     }

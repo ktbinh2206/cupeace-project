@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('followers',function(Blueprint $table){
             $table->foreignId('user_id')->constrained();
-            $table->foreignId('artist_id')->constrained();
+            $table->foreignId('artist_id')->constrained()->onDelete('cascade');;
             $table->timestamps();
         });
     }

@@ -113,80 +113,90 @@ export default function CommonSection() {
           </>
           :
           <>
-            <div className=" mx-auto mt-4 border-solid h-1/2 overflow-hidden">
-              <div className="ml-5 text-white font-bold text-2xl">
-                Recently
+            {
+              data?.recently_songs?.length > 0 &&
+              <div className=" mx-auto mt-4 border-solid h-1/2 overflow-hidden">
+                <div className="ml-5 text-white font-bold text-2xl">
+                  Recently
+                </div>
+                <section className="common-section">
+                  {
+                    data?.recently_songs && data.recently_songs.length > 0 ? (
+                      data.recently_songs.slice(0, calculateNumberCard(data.recently_songs.length, gridCol))?.map((song) => (
+                        <PlaylistCard
+                          key={song.id}
+                          song={song} />
+                      ))
+                    ) : (
+                      <>
+                        {
+                          Array.from({ length: gridCol }, (_, index) => (
+                            <PlaylistCard key={index} />
+                          ))
+                        }
+                      </>
+                    )
+                  }
+                </section>
               </div>
-              <section className="common-section">
-                {
-                  data?.recently_songs && data.recently_songs.length > 0 ? (
-                    data.recently_songs.slice(0, calculateNumberCard(data.recently_songs.length, gridCol))?.map((song) => (
-                      <PlaylistCard
-                        key={song.id}
-                        song={song} />
-                    ))
-                  ) : (
-                    <>
-                      {
-                        Array.from({ length: gridCol }, (_, index) => (
-                          <PlaylistCard key={index} />
-                        ))
-                      }
-                    </>
-                  )
-                }
-              </section>
-            </div><div className=" mx-auto mt-4 border-solid h-1/2 overflow-hidden">
-              <div className="ml-5 text-white font-bold text-2xl">
-                Hot
+            }
+            {data?.popular_songs?.length > 0 &&
+              <div className=" mx-auto mt-4 border-solid h-1/2 overflow-hidden">
+                <div className="ml-5 text-white font-bold text-2xl">
+                  Hot
+                </div>
+                <section className="common-section">
+                  {
+                    data?.popular_songs && data.popular_songs.length > 0 ? (
+                      data.popular_songs.slice(0, calculateNumberCard(data.popular_songs.length, gridCol))?.map((song) => (
+                        <PlaylistCard
+                          key={song.id}
+                          song={song} />
+                      ))
+                    ) : (
+                      <>
+                        {
+                          Array.from({ length: gridCol }, (_, index) => (
+                            <PlaylistCard key={index} />
+                          ))
+                        }
+                      </>
+                    )
+                  }
+                </section>
               </div>
-              <section className="common-section">
-                {
-                  data?.popular_songs && data.popular_songs.length > 0 ? (
-                    data.popular_songs.slice(0, calculateNumberCard(data.popular_songs.length, gridCol))?.map((song) => (
-                      <PlaylistCard
-                        key={song.id}
-                        song={song} />
-                    ))
-                  ) : (
-                    <>
-                      {
-                        Array.from({ length: gridCol }, (_, index) => (
-                          <PlaylistCard key={index} />
-                        ))
-                      }
-                    </>
-                  )
-                }
-              </section>
-            </div>
-            <div className=" mx-auto mt-4 border-solid h-1/2 overflow-hidden">
-              <div className="ml-5 text-white font-bold text-2xl">
-                Popular Artist
-              </div>
-              <section id="Projects"
-                className="
+            }
+            {
+              data?.popular_artists?.length > 0 &&
+              <div className=" mx-auto mt-4 border-solid h-1/2 overflow-hidden">
+                <div className="ml-5 text-white font-bold text-2xl">
+                  Popular Artist
+                </div>
+                <section id="Projects"
+                  className="
                   common-section
                 ">
-                {
-                  data?.popular_artists && data.popular_artists.length > 0 ? (
-                    data.popular_artists.slice(0, calculateNumberCard(data.popular_artists.length, gridCol))?.map((artist) => (
-                      <ArtistCard
-                        key={artist.id}
-                        artist={artist} />
-                    ))
-                  ) : (
-                    <>
-                      {
-                        Array.from({ length: gridCol }, (_, index) => (
-                          <ArtistCard key={index} />
-                        ))
-                      }
-                    </>
-                  )
-                }
-              </section>
-            </div>
+                  {
+                    data?.popular_artists && data.popular_artists.length > 0 ? (
+                      data.popular_artists.slice(0, calculateNumberCard(data.popular_artists.length, gridCol))?.map((artist) => (
+                        <ArtistCard
+                          key={artist.id}
+                          artist={artist} />
+                      ))
+                    ) : (
+                      <>
+                        {
+                          Array.from({ length: gridCol }, (_, index) => (
+                            <ArtistCard key={index} />
+                          ))
+                        }
+                      </>
+                    )
+                  }
+                </section>
+              </div>
+
+            }
           </>
       }
     </div>

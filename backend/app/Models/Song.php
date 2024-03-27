@@ -20,6 +20,10 @@ class Song extends Model
     {
         return $this->belongsToMany(Artist::class, 'artist_have_songs');
     }
+    public function categories()
+    {
+        return $this->belongsToMany(Category::class, 'song_have_categories');
+    }
 
     public function views()
     {
