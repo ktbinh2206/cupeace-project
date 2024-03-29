@@ -17,7 +17,7 @@ const Profile = () => {
 
   const profileMenuItems = [
     {
-      label: user?.name,
+      label: 'Profile',
       icon: UserCircleIcon,
     },
     {
@@ -33,6 +33,7 @@ const Profile = () => {
       icon: PowerIcon,
     },
   ];
+
   useEffect(() => {
     localStorage.getItem('USERID') !== null &&
       axiosClient

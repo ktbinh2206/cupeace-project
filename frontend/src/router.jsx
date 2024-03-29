@@ -16,6 +16,7 @@ import Account from "./Components/Admin/Account";
 import Song from "./Components/Admin/Song";
 import ArtistProfile from "./Components/Public/ArtistProfile";
 import SongProfile from "./Components/Public/SongProfile";
+import UserProfile from "./Components/Public/UserProfile";
 
 const router = createBrowserRouter([
 
@@ -57,6 +58,11 @@ const router = createBrowserRouter([
         path: '/song/:id',
         element:
           <SongProfile />
+      },
+      {
+        path: '/user/:id',
+        element:
+          <UserProfile />
       },
       {
         path: '/upload-song',

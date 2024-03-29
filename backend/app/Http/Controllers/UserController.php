@@ -80,4 +80,11 @@ class UserController extends Controller
         $roles = DB::table('roles')->get();
         return $roles;
     }
+
+    public function profile(Request $request){
+
+        $useId = $request->query('id');
+        $user = User::find($useId);
+        return $user;
+    }
 }

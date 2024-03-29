@@ -109,13 +109,44 @@ function SongItem({ index = '#', song = null }) {
       })
   }
 
-  const handlePlay = () => {
-    console.log(song?.name);
-    if (song?.id != state?.currentSong?.id || !state.currentSong.id) {
-      dispatch(actions.setCurrentSong(song));
-    }
-  }
+ let  currentController;
 
+  const handlePlay = () => {
+    console.log('play');
+    if (!state.currentUserID) {
+      navigate('/login');
+      dispatch(actions.setNotificationPopup([
+        {
+          type: 'warning',
+          emphasize: 'LOGIN REQUIRED',
+          content: 'You need to login first'
+        }
+      ]));
+    } else {
+      if (currentController) {
+        // If there's a previous request, abort it
+        currentController.abort();
+      }
+      currentController = new AbortController();
+      const signal = currentController.signal;
+      if (state.currentSong?.id != song.id) {
+        console.log('click');
+        axiosClient
+          .get('/song/get-playlists?songId=' + song.id, { signal })
+          .then(({ data }) => {
+            dispatch(actions.setCurrentPlaylist(data.playlist));
+            dispatch(actions.setCurrentSong(data.playlist[0]));
+          })
+          .catch(err => {
+            if (err.name !== 'AbortError') {
+              console.error(err);
+              // Handle other errors (not abort errors) if needed
+            }
+          });
+      }
+    }
+
+  }
   return (
     <div className="h-16 hover:bg-[#fdfdfd41] grid grid-cols-12 rounded-lg pl-3 items-center"
       onMouseEnter={() => setHover(true)}
@@ -130,7 +161,9 @@ function SongItem({ index = '#', song = null }) {
               mount: { scale: 1, y: 0 },
               unmount: { scale: 0, y: 25 },
             }}>
-            <PlayIcon className="w-5 h-5 hover:cursor-pointer" onClick={handlePlay} />
+            <PlayIcon
+              className="w-5 h-5 hover:cursor-pointer"
+              onClick={handlePlay} />
           </Tooltip>
           : index}
       </div>

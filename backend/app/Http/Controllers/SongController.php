@@ -7,16 +7,17 @@ use App\Models\Song;
 use App\Models\User;
 use App\Notifications\SongPending;
 use App\Notifications\SongStatusUpdate;
+use App\Services\RecommendationService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Notification;
 
-use function PHPUnit\Framework\isEmpty;
 
 class SongController extends Controller
 {
+
     /**
      * Display a listing of the resource.
      */
@@ -128,9 +129,6 @@ class SongController extends Controller
         $song = Song::find($id);
         $song->artists;
         $song->views = $song->views();
-        if ($song->isFollowed()) {
-            $song->followed = $song->isFollowed();
-        }
         return $song;
     }
 
@@ -336,7 +334,7 @@ class SongController extends Controller
             }
             return 'Add success';
         } catch (\Throwable $th) {
-            return response()->json('System ERR');
+            return response()->json('System ERR', 500);
         }
     }
 
@@ -426,6 +424,7 @@ class SongController extends Controller
         ];
         return $data;
     }
+
     public function homeForGuest(Request $request)
     {
 
@@ -440,6 +439,27 @@ class SongController extends Controller
 
         return response()->json([
             'popular_songs' => $songs
+        ]);
+    }
+
+    public function getPlaylist(Request $request)
+    {
+        // Validate song ID (optional)
+        // $request->validate(['songId' => 'required|integer']);
+        $songId = $request->query('songId');
+        // Retrieve song data from database
+        $song = Song::find($songId);
+
+        // Check if song exists
+        if (!$song) {
+            return response()->json(['error' => 'Song not found'], 404);
+        }
+        // Generate playlist using recommendation service
+        $playlist = RecommendationService::generatePlaylist($song);
+
+        // Return playlist data as JSON response
+        return response()->json([
+            'playlist' => $playlist,
         ]);
     }
 }

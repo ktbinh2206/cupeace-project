@@ -3,6 +3,7 @@ import { Tooltip } from "@material-tailwind/react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { actions, useStore } from "../../../store";
+import axiosClient from "../../../axios";
 
 function formatTime(time) {
   const [hh, mm, ss] = time.split(':');
@@ -19,6 +20,43 @@ const SongItem = ({ song, index }) => {
 
   const [hover, setHover] = useState(false)
 
+  let currentController;
+
+  const handleClick = () => {
+    if (!globalState.currentUserID) {
+      navigate('/login');
+      dispatch(actions.setNotificationPopup([
+        {
+          type: 'warning',
+          emphasize: 'LOGIN REQUIRED',
+          content: 'You need to login first'
+        }
+      ]));
+    } else {
+      if (currentController) {
+        // If there's a previous request, abort it
+        currentController.abort();
+      }
+      currentController = new AbortController();
+      const signal = currentController.signal;
+      if (globalState.currentSong?.id != song.id) {
+        console.log('click');
+        axiosClient
+          .get('/song/get-playlists?songId=' + song.id, { signal })
+          .then(({ data }) => {
+            globalDispatch(actions.setCurrentPlaylist(data.playlist));
+            globalDispatch(actions.setCurrentSong(data.playlist[0]));
+          })
+          .catch(err => {
+            if (err.name !== 'AbortError') {
+              console.error(err);
+              // Handle other errors (not abort errors) if needed
+            }
+          });
+      }
+    }
+  };
+  
   return (
     <div
       className=" mx-3 grid grid-cols-12 items-center hover:bg-slate-700 rounded-lg"
@@ -40,9 +78,7 @@ const SongItem = ({ song, index }) => {
               }}>
               <PlayIcon
                 className={`${hover ? 'cursor-pointer' : 'hidden'} active:scale-95 relative w-10 h-10 -top-12 left-2 text-white`}
-                onClick={() => {
-                  globalDispatch(actions.setCurrentSong(song));
-                }}
+                onClick={handleClick}
               />
             </Tooltip>
           </div>

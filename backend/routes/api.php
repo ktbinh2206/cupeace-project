@@ -32,8 +32,8 @@ use Spatie\Permission\Models\Role;
 Route::get('/get-image/{path}', function ($path) {
     $file = Storage::path('\public\images' . '\\' . $path);
     return response()->file($file);
-})->name('get_image');
-
+})->name('get-image');
+//
 Route::get('/get-song/{path}', function ($path) {
     $file = Storage::path('\public\songs' . '\\' . $path);
     return response()->file($file);
@@ -41,56 +41,61 @@ Route::get('/get-song/{path}', function ($path) {
 
 //logined route
 Route::middleware('auth:sanctum')->group(function () {
-
+    //
     Route::prefix('/users')->group(function () {
         // /users/roles/order=?&field=?
         Route::get('/roles', [UserController::class, 'usersWithRoles'])->name('users.roles');
         Route::resource('/', UserController::class);
     });
-
+    //
     Route::prefix('/user')->group(function () {
-        Route::get('/notifications', [NotificationController::class, 'user']);
-        Route::post('/notifications/read', [NotificationController::class, 'read']);
-        Route::get('/artist', [ArtistController::class, 'userID']);
+        Route::get('/notifications', [NotificationController::class, 'user'])->name('user.notifitions');
+        Route::post('/notifications/read', [NotificationController::class, 'read'])->name('user.read.notification');
+        Route::get('/artist', [ArtistController::class, 'userID'])->name('user.artist');
     });
-
+    //
     Route::group(["prefix" => "/song"], function () {
-        Route::post('/follow', [SongController::class, 'follow']);
-        Route::post('/unfollow', [SongController::class, 'unfollow']);
-        Route::get('/status', [SongController::class, 'getSongByStatusId']);
-        Route::post('/upload', [SongController::class, 'upload']);
-        Route::post('/stream', [SongController::class, 'stream']);
-        Route::get('/follow/{songID}', [SongController::class, 'isFollow']);
+        Route::post('/follow', [SongController::class, 'follow'])->name('song.follow');
+        Route::post('/unfollow', [SongController::class, 'unfollow'])->name('song.unfollow');
+        Route::get('/status', [SongController::class, 'getSongByStatusId'])->name('song.status');
+        Route::post('/upload', [SongController::class, 'upload'])->name('song.upload');
+        Route::post('/stream', [SongController::class, 'stream'])->name('song.stream');
+        Route::get('/follow/{songID}', [SongController::class, 'isFollow'])->name('song.isfollow');
     });
-
+    //
     Route::get('/user', function (Request $request) {
         $user = Auth::user();
         return $user;
     });
-
-    Route::get('/roles', [UserController::class, 'getAllRoles']);
+    //
+    Route::get('/roles', [UserController::class, 'getAllRoles'])->name('roles.index');
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+    //
+    Route::get('/library/songs', [SongController::class, 'getFollowSongs'])->name('songs.library');
+    Route::get('/songs/statuses', [SongController::class, 'statuses'])->name('song.statuses'); //get number of songs each status
+    Route::post('/songs/status', [SongController::class, 'updateStatus'])->name('');
+    Route::get('/song/get-playlists', [SongController::class, 'getPlaylist'])->name(('song.playlists'));
 
-    Route::get('/library/songs', [SongController::class, 'getFollowSongs']);
-    Route::get('/songs/statuses', [SongController::class, 'statuses']);
-    Route::post('/songs/status', [SongController::class, 'updateStatus']);
-    Route::get('/home/user', [SongController::class, 'homeForLoginedUser']);
+    Route::get('/home/user', [SongController::class, 'homeForLoginedUser'])->name('home.use');
 });
-
-Route::get('/categories/search', [CategoryController::class,'search']);
+//
+Route::get('/categories/search', [CategoryController::class, 'search'])->name('categories.search');
 Route::resource('/categories', CategoryController::class);
-
+//
 Route::post('/signup', [AuthController::class, 'signup'])->name('signup');
 Route::post('/login', [AuthController::class, 'login'])->name('login');
-
+//
 Route::resource('/songs', SongController::class);
-Route::get('/home/guest', [SongController::class, 'homeForGuest']);
-Route::get('/songs/{id}/artists', [SongController::class, 'artists']);
-Route::get('/song/streams', [SongController::class, 'streams']);
+Route::get('/home/guest', [SongController::class, 'homeForGuest'])->name('home.guest');
+Route::get('/songs/{id}/artists', [SongController::class, 'artists'])->name('song.artists'); //Get artist of specific song (Not recommend use)
+Route::get('/song/streams', [SongController::class, 'streams'])->name('song.streams');
 
-Route::get('/search', [SearchController::class, 'search']);
-
+//
+Route::get('/search', [SearchController::class, 'search'])->name('search');
+//
 Route::resource('/artists', ArtistController::class);
-Route::get('/artists/{id}/songs', [ArtistController::class, 'songs']);
-Route::get('/artists/search', [ArtistController::class, 'search'])->name('songs.artists');
+Route::get('/artists/{id}/songs', [ArtistController::class, 'songs'])->name('artist.songs');
+Route::get('/artists/search', [ArtistController::class, 'search'])->name('aritsts.search');
 Route::get('/artist/profile', [ArtistController::class, 'profile'])->name('artist.profile');
+
+Route::get('/user/profile',[UserController::class, 'profile'])->user('user.profile');

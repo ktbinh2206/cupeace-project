@@ -1,8 +1,10 @@
+import axiosClient from '../axios'
 import {
   SET_CURRENT_USER_ID,
   SET_CURRENT_TOKEN,
   LOGOUT,
   SET_NOTIFICATION_POPUP,
+  SET_CURRENT_PLAYLIST,
   SET_CURRENT_SONG,
 } from './constants'
 
@@ -10,12 +12,8 @@ const initState = {
   currentUserID: localStorage.getItem('USERID') || null,
   currentToken: localStorage.getItem('TOKEN') || null,
   notification: null,
-  currentSong: {
-    id: null,
-    link: null,
-    image: null,
-    name: null
-  },
+  currentPlaylist: null,
+  currentSong: null,
 }
 
 function reducer(state, action) {
@@ -48,9 +46,13 @@ function reducer(state, action) {
     case SET_CURRENT_SONG:
       return {
         ...state,
-        notification: null,
         currentSong: action.payload,
       }
+    case SET_CURRENT_PLAYLIST:
+      return {
+        ...state,
+        currentPlaylist: action.payload,
+      };
     default:
       throw new Error('Invalid action')
 

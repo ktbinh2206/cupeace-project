@@ -50,7 +50,6 @@ export default function ArtistCard({ artist = null }) {
                 className={`translate-x-52 -translate-y-20 transform duration-100 ${hovered ? 'opacity-100' : 'opacity-0'} `}
                 onMouseEnter={() => setHovered(true)}
             >
-
             </div>
         </Link>
     )

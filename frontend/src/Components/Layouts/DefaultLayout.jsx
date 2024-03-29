@@ -3,6 +3,7 @@ import MusicPlay from "../Public/AudioPlayer/MusicPlay";
 import StickyNarbar from '../Public/NavBar/NavBar'
 import { useStore } from "../../store";
 import { Link } from "react-router-dom";
+import { useEffect } from "react";
 
 const Footer = () => {
   return (
@@ -28,6 +29,7 @@ const Footer = () => {
 
 export default function DefaultLayout() {
   const [state, dispatch] = useStore()
+
   return (
     <>
       <StickyNarbar />
@@ -35,7 +37,7 @@ export default function DefaultLayout() {
       {
         state?.currentUserID
           ?
-          state?.currentSong?.link
+          state?.currentPlaylist?.length > 0
             ?
             <MusicPlay />
             :

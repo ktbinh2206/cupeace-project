@@ -18,7 +18,6 @@ export default function CommonSection() {
       axiosClient
         .get('/home/user', { signal })
         .then(({ data }) => {
-          console.log(data);
           setData(data)
         })
         .catch(err => {

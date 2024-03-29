@@ -6,6 +6,7 @@ import { Tooltip } from "@material-tailwind/react"
 import { Link } from "react-router-dom";
 import { PlayCircleIcon } from '@heroicons/react/24/solid'
 import "./style.css"
+import playing from '../../../assets/current-play.gif'
 export default function PlaylistCard({ song = null }) {
 
   const [state, dispatch] = useStore();
@@ -13,20 +14,44 @@ export default function PlaylistCard({ song = null }) {
   const [hovered, setHovered] = useState(false);
   const navigate = useNavigate();
 
-  const handleClick = () => {
 
+  let currentController;
+
+  const handleClick = () => {
     if (!state.currentUserID) {
-      dispatch(actions.setNotificationPopup([{
-        type: 'warning',
-        emphasize: 'LOGIN REQUIRED',
-        content: 'You need login first'
-      }]))
-      navigate('/login')
+      navigate('/login');
+      dispatch(actions.setNotificationPopup([
+        {
+          type: 'warning',
+          emphasize: 'LOGIN REQUIRED',
+          content: 'You need to login first'
+        }
+      ]));
+    } else {
+
+      if (currentController) {
+        // If there's a previous request, abort it
+        currentController.abort();
+      }
+      currentController = new AbortController();
+      const signal = currentController.signal;
+      if (state.currentSong?.id != song.id) {
+
+        axiosClient
+          .get('/song/get-playlists?songId=' + song.id, { signal })
+          .then(({ data }) => {
+            dispatch(actions.setCurrentPlaylist(data.playlist));
+            dispatch(actions.setCurrentSong(data.playlist[0]));
+          })
+          .catch(err => {
+            if (err.name !== 'AbortError') {
+              console.error(err);
+              // Handle other errors (not abort errors) if needed
+            }
+          });
+      }
     }
-    if (song?.id != state?.currentSong?.id || !state.currentSong.id) {
-      dispatch(actions.setCurrentSong(song));
-    }
-  }
+  };
 
   return (
     <div
@@ -47,19 +72,37 @@ export default function PlaylistCard({ song = null }) {
             :
             <div className="w-full h-full object-cover rounded-t-lg"></div>
         }
-        <Tooltip content="Play Song"
-          placement="top"
-          animate={{
-            mount: { scale: 1, y: 0 },
-            unmount: { scale: 0, y: 25 },
-          }}>
-          <PlayCircleIcon
-            onClick={handleClick}
-            className={`absolute
+        {
+          song?.id == state.currentSong?.id
+            ?
+            <Tooltip content="Playing"
+              placement="top"
+              animate={{
+                mount: { scale: 1, y: 0 },
+                unmount: { scale: 0, y: 25 },
+              }}>
+              <img
+                src={playing}
+                className={`absolute
+             right-[6%] bottom-[-10px] h-10 w-10 text-[#4741B5]  hover:scale-105 active:text-[#2c2a5c] transform duration-300 -translate-y-[10px] `}
+                onMouseEnter={() => setHovered(true)}
+              />
+            </Tooltip>
+            :
+            <Tooltip content="Play Song"
+              placement="top"
+              animate={{
+                mount: { scale: 1, y: 0 },
+                unmount: { scale: 0, y: 25 },
+              }}>
+              <PlayCircleIcon
+                onClick={handleClick}
+                className={`absolute
            right-[6%] bottom-[-10px] h-16 w-16 text-[#4741B5]  hover:scale-105 active:text-[#2c2a5c] transform duration-300 ${hovered ? 'opacity-100 -translate-y-[10px]' : 'opacity-0'} `}
-            onMouseEnter={() => setHovered(true)}
-          />
-        </Tooltip>
+                onMouseEnter={() => setHovered(true)}
+              />
+            </Tooltip>
+        }
       </div>
       {/* Artist and Songs */}
       <div className="px-2 py-3 w-full flex flex-col">

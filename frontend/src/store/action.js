@@ -3,9 +3,8 @@ import {
   SET_CURRENT_USER_ID,
   LOGOUT,
   SET_NOTIFICATION_POPUP,
+  SET_CURRENT_PLAYLIST,
   SET_CURRENT_SONG,
-  SET_CURRENT_SONG_IMAGE,
-  SET_CURRENT_SONG_NAME,
 } from './constants'
 
 export const setCurrentUserID = payload => ({
@@ -26,8 +25,12 @@ export const setNotificationPopup = payload => ({
   payload
 })
 
+export const setCurrentPlaylist = payload => ({
+  type: SET_CURRENT_PLAYLIST,
+  payload
+})
+
 export const setCurrentSong = payload => ({
   type: SET_CURRENT_SONG,
   payload
 })
-
