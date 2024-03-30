@@ -6,16 +6,12 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\SongController;
+use App\Http\Controllers\TestController;
 use App\Http\Controllers\UserController;
-use App\Http\Controllers\VerifyEmailController;
-use App\Models\Category;
-use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
-use Spatie\Permission\Models\Permission;
-use Spatie\Permission\Models\Role;
 
 /*
 |--------------------------------------------------------------------------
@@ -75,6 +71,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/songs/statuses', [SongController::class, 'statuses'])->name('song.statuses'); //get number of songs each status
     Route::post('/songs/status', [SongController::class, 'updateStatus'])->name('');
     Route::get('/song/get-playlists', [SongController::class, 'getPlaylist'])->name(('song.playlists'));
+    Route::post('/song/logs', [SongController::class, 'logStream'])->name(('song.log'));
 
     Route::get('/home/user', [SongController::class, 'homeForLoginedUser'])->name('home.use');
 });
@@ -98,4 +95,6 @@ Route::get('/artists/{id}/songs', [ArtistController::class, 'songs'])->name('art
 Route::get('/artists/search', [ArtistController::class, 'search'])->name('aritsts.search');
 Route::get('/artist/profile', [ArtistController::class, 'profile'])->name('artist.profile');
 
-Route::get('/user/profile',[UserController::class, 'profile'])->user('user.profile');
+Route::get('/user/profile', [UserController::class, 'profile'])->name('user.profile');
+
+Route::get('/test', [TestController::class, 'test']);

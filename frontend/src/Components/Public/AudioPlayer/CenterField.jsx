@@ -63,6 +63,18 @@ const ProgressBar = ({ elapsed, handleProgressChange, duration }) => {
     )
 }
 
+function useLogStreamingTime(streamingTime, totalTime, handleSendLog, lastLogTime, setLastLogTime) {
+
+    useEffect(() => {
+        let finalDuration = streamingTime + totalTime
+        if (finalDuration > 29.5 && finalDuration - lastLogTime >= 10) {
+            handleSendLog(finalDuration)
+            setLastLogTime(finalDuration);
+        }
+
+    }, [streamingTime]); // Update on streamingTime or isStreaming change
+}
+
 export default function CenterField({
     src,
     mute,
@@ -70,7 +82,9 @@ export default function CenterField({
     handleNextSong,
     handlePreviousSong,
     position,
-    handleStream,
+    handleSendLog,
+    setStreamingSession,
+    handleSendFinalLog,
 }) {
 
 
@@ -85,12 +99,15 @@ export default function CenterField({
     const [elapsed, setElapsed] = useState(0);
     const [duration, setDuration] = useState(0);
 
+    const [lastLogTime, setLastLogTime] = useState(0);
 
     const timeUpdate = (e) => {
         const elapsedTime = Math.floor(audioPlayer?.current?.currentTime)
         setElapsed(elapsedTime);
         setStreamingTime(e.target.currentTime - timestamp);
     }
+
+    useLogStreamingTime(streamingTime, totalTime, handleSendLog, lastLogTime, setLastLogTime);
 
     useEffect(() => {
         // Function to handle 'loadedmetadata' event
@@ -111,17 +128,25 @@ export default function CenterField({
         // Add 'loadedmetadata' event listener to the audio element
         audioPlayer.current.addEventListener('loadedmetadata', handleLoadedMetadata);
         let finalDuration = totalTime + streamingTime;
-        if (finalDuration > 30) {
-            handleStream(finalDuration);
+
+        setLastLogTime(0)
+        console.log(finalDuration);
+        if (finalDuration >= 30) {
+            handleSendFinalLog(finalDuration)
+            finalDuration = 0
         }
+
+        setStreamingSession(Date.now())
         setStreamingTime(0)
         setTotalTime(0)
         setTimestamp(0)
         // Cleanup function to remove the event listener
         return () => {
+
             audioPlayer?.current?.removeEventListener('loadedmetadata', handleLoadedMetadata);
         };
     }, [src]);
+
 
     //Calculate duration and elapsedTime
     useEffect(() => {

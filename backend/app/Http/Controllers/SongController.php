@@ -12,6 +12,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Notification;
 
 
@@ -288,6 +289,10 @@ class SongController extends Controller
         return response()->json($table);
     }
 
+    public function formatDuration($duration)
+    {
+    }
+
     public function stream(Request $request)
     {
         try {
@@ -461,5 +466,65 @@ class SongController extends Controller
         return response()->json([
             'playlist' => $playlist,
         ]);
+    }
+
+    public function logStream(Request $request)
+    {
+        try {
+            $songId = $request->songId;
+            $duration = gmdate("H:i:s", round($request->duration));
+            $streamingSession = $request->streamingSession;
+            $userId=Auth::id();
+            DB::table('streaming_logs')->insert([
+                [
+                    'song_id' => $songId,
+                    'user_id' => $userId,
+                    'streaming_session' => $streamingSession,
+                    'duration' => $duration,
+                    'created_at' => date("Y/m/d H:i:s"),
+                    'updated_at' => date("Y/m/d H:i:s"),
+                ]
+            ]);
+            //add recently stream
+            $history = DB::table('user_song_actions')
+                ->where('user_id', '=', $userId)
+                ->where('song_id', '=', $songId)
+                ->where('action_type_id', '=', 1)
+                ->get();
+
+            if (count($history) == 0) {
+                DB::table('user_song_actions')->insert([
+                    'user_id' => $userId,
+                    'song_id' => $songId,
+                    'duration' => $duration,
+                    'created_at' => date("Y/m/d H:i:s"),
+                    'action_type_id' => 1,
+                ]);
+            } else {
+                DB::table('user_song_actions')
+                    ->where('user_id', '=', $userId)
+                    ->where('song_id', '=', $songId)
+                    ->where('action_type_id', '=', 1)->delete();
+
+                DB::table('user_song_actions')->insert([
+                    'user_id' => $userId,
+                    'song_id' => $songId,
+                    'duration' => $duration,
+                    'created_at' => date("Y/m/d H:i:s"),
+                    'action_type_id' => 1,
+                ]);
+            }
+            return response()->json(
+                [
+                    'song' => $songId,
+                    'duration' => $duration,
+                    'session' => $streamingSession,
+                ]
+            );
+        } catch (\Throwable $th) {
+            // Log the error and return an appropriate response
+            Log::error($th->getMessage());
+            return response()->json(['error' => 'An error occurred'], 500);
+        }
     }
 }

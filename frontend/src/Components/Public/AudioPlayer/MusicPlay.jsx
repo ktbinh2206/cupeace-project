@@ -16,12 +16,14 @@ export default function MusicPlay() {
   const [src, setSrc] = useState();
   const [image, setImage] = useState();
   const [currentSong, setCurrentSong] = useState();
+
+  const [streamingSession, setStreamingSession] = useState(null)
   //Store previous song for send to backend
   const [prevSong, setPrevSong] = useState(null);
 
   //use for center and left
   const [volume, setVolume] = useState(76);
-  const [mute, setMute] = useState(false); 
+  const [mute, setMute] = useState(false);
 
   //When component mount and unmount
   useEffect(() => {
@@ -61,17 +63,32 @@ export default function MusicPlay() {
     }
   }
 
-  const handleStream = (duration) => {
-    console.log(duration);
-    console.log(prevSong);
-    axiosClient
-      .post('/song/stream', {
-        id: prevSong.id,
+
+
+  const handleSendLog = (duration) => {
+    console.log(streamingSession);
+    console.log(currentSong);
+    axiosClient.post('/song/logs',
+      {
         duration: duration,
+        songId: currentSong.id,
+        streamingSession: streamingSession,
       })
-      .then(data => console.log(data))
-      .catch((err) => console.error(err))
-    setPrevSong(currentSong)
+      .then((data) => { console.log(data); })
+      .catch(err => console.log(err))
+  }
+  
+  const handleSendFinalLog = (duration) => {
+    console.log(streamingSession);
+    console.log(prevSong);
+    axiosClient.post('/song/logs',
+      {
+        duration: duration,
+        songId: prevSong.id,
+        streamingSession: streamingSession,
+      })
+      .then((data) => { console.log(data); })
+      .catch(err => console.log(err))
   }
 
   const updateIsFollowedById = (songId, isFollowed) => {
@@ -168,8 +185,10 @@ export default function MusicPlay() {
           handleNextSong={handleNextSong}
           handlePreviousSong={handlePreviousSong}
           position={position}
-          handleStream={handleStream}
+          handleSendLog={handleSendLog}
           currentSong={currentSong}
+          setStreamingSession={setStreamingSession}
+          handleSendFinalLog={handleSendFinalLog}
         />
         <RightFunctionButton
           volume={volume}

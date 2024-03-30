@@ -49,4 +49,12 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->morphMany(\Illuminate\Notifications\DatabaseNotification::class, 'notifiable')->orderByRaw('read_at IS NULL DESC, created_at DESC');
     }
+
+    public function followings(){
+        return $this->belongsToMany(Artist::class, 'followers');
+    }
+
+    public function playlists(){
+        return $this->belongsToMany(SongList::class,'user_song_list');
+    }
 }

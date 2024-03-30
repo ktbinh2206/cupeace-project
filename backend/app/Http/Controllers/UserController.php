@@ -85,6 +85,8 @@ class UserController extends Controller
 
         $useId = $request->query('id');
         $user = User::find($useId);
+        $user->followings;
+        $user->playlists;
         return $user;
     }
 }

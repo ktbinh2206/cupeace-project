@@ -45,10 +45,11 @@ const Profile = () => {
           console.log(err);
         })
   }, [])
-  
+
   const handleLogout = e => {
     e.preventDefault();
-    dispatch(actions.setCurrentSong())
+    dispatch(actions.setCurrentSong(null))
+    dispatch(actions.setCurrentPlaylist(null))
 
     axiosClient
       .post("/logout")
@@ -100,8 +101,8 @@ const Profile = () => {
               key={key}
               onClick={e => {
                 switch (label) {
-                  case user?.name:
-                    closeMenu
+                  case 'Profile':
+                    router.navigate('/user/' + user?.id)
                     break
                   case "Upload Song":
                     router.navigate('/upload-song')
