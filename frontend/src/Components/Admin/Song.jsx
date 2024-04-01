@@ -293,6 +293,7 @@ export default function Song() {
     axiosClient
       .get('/songs?' + urlTail, { signal })
       .then(({ data }) => {
+        console.log(data);
         setLoading(false)
         setPage(data)
         setTotalSong(data.total)
@@ -313,8 +314,9 @@ export default function Song() {
     if (bottom && page.next_page_url) {
       setLoadingMore(true)
       axiosClient
-        .get(page.next_page_url + '&' + urlTail + '&status_id=' + statusId)
+        .get(page.next_page_url + '&' + urlTail + `${statusId != 0 && `&status_id= ${statusId}`}`)
         .then(({ data }) => {
+          console.log(data);
           setPage(data)
           setSongs([...songs, ...data.data])
 

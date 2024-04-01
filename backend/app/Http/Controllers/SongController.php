@@ -396,16 +396,19 @@ class SongController extends Controller
     {
         $userId = Auth::id();
 
-        //Recently Songs
         $recentlyId = DB::table('user_song_actions')
             ->where('user_id', '=', $userId)
             ->where('action_type_id', '=', 1)
-            ->take(9)->orderBy('created_at', 'desc')->get(['song_id', 'created_at']);
-        $recentlySongs = Song::whereIn('id', $recentlyId->pluck('song_id'))->get();
-        foreach ($recentlySongs as $song) {
-            $song->artists;
-        }
+            ->take(9)
+            ->orderBy('created_at', 'desc')
+            ->get(['song_id', 'created_at']);
 
+        $recentlySongs = [];
+        foreach ($recentlyId as $id) {
+            $song = Song::find($id->song_id); // Access song_id property of $id
+            $song->load('artists'); // Eager load artists relationship
+            $recentlySongs[] = $song; // Append song to array
+        }
 
         //Popular Songs
         $popularSongs = Song::where('song_status_id', 1)->get();
@@ -474,7 +477,7 @@ class SongController extends Controller
             $songId = $request->songId;
             $duration = gmdate("H:i:s", round($request->duration));
             $streamingSession = $request->streamingSession;
-            $userId=Auth::id();
+            $userId = Auth::id();
             DB::table('streaming_logs')->insert([
                 [
                     'song_id' => $songId,

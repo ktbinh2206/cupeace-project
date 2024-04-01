@@ -31,7 +31,8 @@ class RecommendationService
         }
         //id of song recommended
         $id = array_unique($id); //Remove duplicate id
-        $recommendedSongs = Song::with('artists')->findMany($id)->toArray();
+        $recommendedSongs = Song::with('artists')
+        ->where('song_status_id', 1)->findMany($id)->toArray();
 
         shuffle($recommendedSongs);
 
@@ -51,7 +52,8 @@ class RecommendationService
         try {
             if (count($recommendedSongs) <= 50) {
                 // Fetch additional songs based on popularity
-                $additionalRecs = Song::with('artists')->whereNotIn('id', array_column($recommendedSongs, 'id'))
+                $additionalRecs = Song::with('artists')
+                ->where('song_status_id', 1)->whereNotIn('id', array_column($recommendedSongs, 'id'))
                     ->take(50 - count($recommendedSongs))
                     ->get()
                     ->toArray();
