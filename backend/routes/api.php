@@ -6,6 +6,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\SongController;
+use App\Http\Controllers\SongListController;
 use App\Http\Controllers\TestController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
@@ -73,7 +74,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/song/get-playlists', [SongController::class, 'getPlaylist'])->name(('song.playlists'));
     Route::post('/song/logs', [SongController::class, 'logStream'])->name(('song.log'));
 
-    Route::get('/home/user', [SongController::class, 'homeForLoginedUser'])->name('home.use');
+    Route::get('/home/user', [SongController::class, 'homeForLoginedUser'])->name('home.user');
+
+    Route::post('/song-lists', [SongListController::class, 'store'])->name('songLists.store');
+    Route::get('/song-lists', [SongListController::class, 'index'])->name('songLists.index');
+    Route::delete('/song-lists', [SongListController::class, 'destroy'])->name('songLists.destroy');
+    Route::patch('/song-lists/{id}', [SongListController::class, 'update'])->name(('songLists.update'));
 });
 //
 Route::get('/categories/search', [CategoryController::class, 'search'])->name('categories.search');
@@ -86,7 +92,6 @@ Route::resource('/songs', SongController::class);
 Route::get('/home/guest', [SongController::class, 'homeForGuest'])->name('home.guest');
 Route::get('/songs/{id}/artists', [SongController::class, 'artists'])->name('song.artists'); //Get artist of specific song (Not recommend use)
 Route::get('/song/streams', [SongController::class, 'streams'])->name('song.streams');
-
 //
 Route::get('/search', [SearchController::class, 'search'])->name('search');
 //
@@ -97,4 +102,4 @@ Route::get('/artist/profile', [ArtistController::class, 'profile'])->name('artis
 
 Route::get('/user/profile', [UserController::class, 'profile'])->name('user.profile');
 
-Route::get('/test', [TestController::class, 'test']);
+Route::patch('/test', [TestController::class, 'test']);

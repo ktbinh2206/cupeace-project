@@ -12,7 +12,7 @@ export default function ArtistCard({ artist }) {
                         src={`${import.meta.env.VITE_GET_IMAGE_URL}/${artist?.avatar}`} />
                 </div>
                 <div className=" flex-grow ml-2 text-white ">
-                    <div className="text-lg font-medium">
+                    <div className="text-base font-normal">
                         Artist
                     </div>
                     <div className="text-xl">

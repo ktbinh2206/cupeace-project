@@ -1,13 +1,11 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useParams } from "react-router";
 import axiosClient from "../../../axios";
-import { HeartIcon, PlusCircleIcon } from "@heroicons/react/24/outline";
-import { CheckCircleIcon, PlayCircleIcon } from "@heroicons/react/24/solid";
-import verified from "../../../assets/verified.svg";
+import { PlayCircleIcon } from "@heroicons/react/24/solid";
 import ArtistCard from "./ArtistCard";
 import { Tooltip } from "@material-tailwind/react";
 import { actions, useStore } from "../../../store";
-import { getAverageColor } from "../../../getColor"; // Import the getAverageColor function
+import { getAverageColor, getTextColor } from "../../../getColor"; // Import the getAverageColor function
 import { Link } from "react-router-dom";
 
 function formatViews(view) {
@@ -44,9 +42,9 @@ export default function SongProfile() {
   const { id } = useParams();
   const [song, setSong] = useState();
   const [backgroundColor, setBackgroundColor] = useState(''); // State for background   const [state, dispatch] = useStore();
+  const [textColor, setTextColor] = useState('')
+
   const imageRef = useRef(null); // Ref for the image element
-
-
 
   useEffect(() => {
     axiosClient
@@ -69,6 +67,7 @@ export default function SongProfile() {
     if (imageRef.current) {
       imageRef.current.onload = () => {
         const { R, G, B } = getAverageColor(imageRef.current, 4)
+        setTextColor(getTextColor({ R, G, B }))
         setBackgroundColor(`rgb(${R}, ${G}, ${B})`);
       }
     }
@@ -175,7 +174,7 @@ export default function SongProfile() {
       <div className="w-full h-full rounded-lg bg-[#060c1d] overflow-hidden overflow-y-auto">
         <div
           className={`h-full rounded-t-lg -z-10`}
-          style={{ backgroundSize: "cover", background: `linear-gradient(180deg, ${backgroundColor} 0%, ${backgroundColor} 90%, rgba(0,0,0,0.5) 100%)` }}
+          style={{ backgroundSize: "cover", background: `linear-gradient(180deg, ${backgroundColor} 0%, rgba(0,0,0,0.1) 100%)` }}
         >
           <div className="flex items-center h-2/3 p-7 gap-10">
             <div className=" h-full flex items-end">
@@ -193,14 +192,14 @@ export default function SongProfile() {
               </div>
             </div>
             {/* Song name */}
-            <div className="w-full h-full flex flex-col justify-end">
-              <span className="font-bold text-white">
+            <div className={`w-full h-full flex flex-col justify-end text-${textColor}`}>
+              <span className="font-bold ">
                 Song
               </span>
-              <span className=" max-w-full py-4 font-bold text-white text-6xl stroke-slate-900 text-nowrap truncate">
+              <span className=" max-w-full py-4 font-bold text-6xl stroke-slate-900 text-nowrap truncate">
                 {song?.name}
               </span>
-              <div className=" b text-white font-medium flex gap-2">
+              <div className=" font-medium flex gap-2">
                 <img className="w-6 aspect-square rounded-full inline-block" src={`${song?.image && import.meta.env.VITE_GET_IMAGE_URL}/${song?.artists[0]?.avatar}`} />
                 <Link
                   className="hover:cursor-pointer hover:underline"
@@ -235,7 +234,6 @@ export default function SongProfile() {
             </div>
             <div className=" grid lg:grid-cols-2 "
             >
-
               <div className="text-white font-semibold text-3xl pb-4">
                 <div>
                   Lyrics
@@ -247,7 +245,7 @@ export default function SongProfile() {
 
                 </div>
               </div>
-              <div className="text-white font-semibold text-3xl font-mono">
+              <div className="text-white font-semibold text-3xl">
                 {song?.artists.map((item) => (
                   <ArtistCard key={item.id} artist={item} />
                 ))}

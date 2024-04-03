@@ -37,3 +37,10 @@ export function getAverageColor(imageElement, ratio) {
 
     return handleImageLoad();
 }
+export function getTextColor({ R, G, B }) {
+    // Convert the RGB components to a brightness value
+    const brightness = (R * 299 + G * 587 + B * 114) / 1000;
+
+    // Use a threshold to determine if the color is light or dark
+    return brightness > 125 ? 'black' : 'white';
+}

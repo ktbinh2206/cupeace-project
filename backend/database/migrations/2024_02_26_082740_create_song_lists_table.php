@@ -14,8 +14,9 @@ return new class extends Migration
         Schema::create('song_lists', function (Blueprint $table) {
             $table->id();
             $table->string('image');
+            $table->string('name');
             $table->foreignId('user_id')->constrained();
-            $table->string('description');
+            $table->string('description')->nullable();
             $table->timestamps();
             $table->boolean('private_setting');
             $table->time('duration');

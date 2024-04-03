@@ -73,7 +73,7 @@ export default function PlaylistCard({ song = null }) {
             <div className="w-full h-full object-cover rounded-t-lg"></div>
         }
         {
-          song?.id == state.currentSong?.id
+          song?.id === state.currentSong?.id && state.currentUserID
             ?
             <Tooltip content="Playing"
               placement="top"

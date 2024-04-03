@@ -4,7 +4,7 @@ import axiosClient from "../../../axios";
 import SongFieldData from "./SongFieldData"
 
 import verified from "../../../assets/verified.svg"
-import { getAverageColor } from "../../../getColor";
+import { getAverageColor, getTextColor } from "../../../getColor";
 
 // Formatting function for displaying view count with a '.' as a thousand separator.
 // This function uses Regular Expression (RegEx) to replace every 3rd digit from the right
@@ -26,18 +26,20 @@ function formatDuration(time) {
   return `${hh !== '00' ? hh : ''}${mm}:${ss}`;
 }
 
-
 export default function ArtistProfile() {
   const { id } = useParams();
   const [artist, setArtist] = useState();
 
   const [backgroundColor, setBackgroundColor] = useState(''); // State for background   const [state, dispatch] = useStore();
+  const [textColor, setTextColor] = useState('')
   const imageRef = useRef(null);
+
 
   useEffect(() => {
     if (imageRef.current) {
       imageRef.current.onload = () => {
         const { R, G, B } = getAverageColor(imageRef.current, 4)
+        setTextColor(getTextColor({ R, G, B }))
         setBackgroundColor(`rgb(${R}, ${G}, ${B})`);
       }
     }
@@ -47,7 +49,7 @@ export default function ArtistProfile() {
     axiosClient
       .get('/artist/profile?id=' + id)
       .then(({ data }) => {
-        document.title=`${data.name}'s Profile | Cupeace`;
+        document.title = `${data.name}'s Profile | Cupeace`;
         setArtist(data);
       })
       .catch((err) => {
@@ -62,7 +64,7 @@ export default function ArtistProfile() {
       <div className="w-full h-full rounded-lg bg-[#060c1d] overflow-hidden overflow-y-auto">
         <div
           className={`h-full rounded-t-lg -z-10`}
-          style={{ backgroundSize: "cover", background: `linear-gradient(180deg, ${backgroundColor} 0%, ${backgroundColor} 90%, rgba(0,0,0,0.5) 100%)` }}
+          style={{ backgroundSize: "cover", background: `linear-gradient(180deg, ${backgroundColor} 0%, rgba(0,0,0,0.1) 100%)` }}
         >
           <div className="flex items-center h-2/3 p-7 gap-10">
             <div className=" h-full flex items-end">
@@ -81,14 +83,14 @@ export default function ArtistProfile() {
             </div>
             {/* User name and handle */}
 
-            <div className="w-full h-full flex flex-col justify-end">
-              <span className="font-bold text-white">
+            <div className={`w-full h-full flex flex-col justify-end text-${textColor}`}>
+              <span className="font-bold ">
                 Artist
               </span>
-              <span className=" max-w-full py-4 font-bold text-white text-6xl stroke-slate-900 text-nowrap truncate">
+              <span className=" max-w-full py-4 font-bold text-6xl stroke-slate-900 text-nowrap truncate">
                 {artist?.name}
               </span>
-              <div className=" b text-white font-medium flex gap-2">
+              <div className="font-medium flex gap-2">
                 {formatViews(artist?.views)} streaming
               </div>
             </div>
