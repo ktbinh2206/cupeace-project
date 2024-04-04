@@ -1,7 +1,5 @@
 import { Outlet, useLocation } from 'react-router'
-import StickyNavbar from '../../Public/NavBar/NavBar'
-import { Link, NavLink } from 'react-router-dom'
-import router from '../../../router'
+import { NavLink } from 'react-router-dom'
 
 const libraryItems = [
   {

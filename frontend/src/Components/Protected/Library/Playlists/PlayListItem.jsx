@@ -2,9 +2,9 @@
 import { XMarkIcon } from '@heroicons/react/24/solid';
 import { Dropdown, } from 'antd';
 import { useState } from 'react';
-import axiosClient from '../../../axios';
-import { useModal } from '../../../CustomeHooks';
-import DeleteConfirmModal from './DeleteConfirmModal';
+import axiosClient from '../../../../axios';
+import { useModal } from '../../../../CustomeHooks';
+import DeleteConfirmModal from '../../../../Modals/DeleteConfirmModal';
 
 const calculateDuration = (currentDate) => {
 

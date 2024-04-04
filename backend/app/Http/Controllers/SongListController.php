@@ -6,6 +6,7 @@ use App\Models\Song;
 use App\Models\SongList;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
@@ -35,6 +36,10 @@ class SongListController extends Controller
             ->get();;
         foreach ($songLists as $list) {
             $list->user;
+            $list->songs;
+            foreach ($list->songs as $song) {
+                $song->views = $song->views();
+            }
         }
         return $songLists;
     }
@@ -88,9 +93,11 @@ class SongListController extends Controller
         if ($user->can('update', $songList)) {
             $songList->name = $request->name;
             $songList->description = $request->description;
-            if ($request->hasFile('image')) {
 
-                Storage::delete('public/images/' . $songList->image);
+            if ($request->hasFile('image')) {
+                if ($songList != '0.jpg') {
+                    Storage::delete('public/images/' . $songList->image);
+                }
 
                 $fileName =   hash('sha256', $user->id . microtime(true)) . '.' . $request->file('image')->extension();
                 $songList->image = $fileName;
@@ -99,6 +106,10 @@ class SongListController extends Controller
 
             $songList->save();
             $songList->user;
+            $songList->songs;
+            foreach ($songList->songs as $song) {
+                $song->views = $song->views();
+            }
             return response()->json([
                 'status' => true,
                 'message' => 'Update Success',
@@ -120,6 +131,9 @@ class SongListController extends Controller
         $user = Auth::user();
         $songList = SongList::find($request->id);
         if ($user->can('delete', $songList)) {
+            if ($songList != '0.jpg') {
+                Storage::delete('public/images/' . $songList->image);
+            }
             $songList->delete();
         } else {
             return response()->json([
@@ -132,5 +146,24 @@ class SongListController extends Controller
             'status' => true,
             'message' => 'Delete success ' . $songList->name,
         ], 200);
+    }
+
+    public function addSong(string $playlistId, string $songId)
+    {
+
+        $position = DB::table('song_positions')
+            ->where('song_list_id', $playlistId)
+            ->count();
+        $newSong = DB::table('song_positions')->insert([
+            'song_list_id' => $playlistId,
+            'song_id' => $songId,
+            'position' => $position,
+        ]);
+
+        return $position;
+    }
+    public function removeSong(string $playlistId, string $songId)
+    {
+        return $playlistId . ' ' . $songId;
     }
 }

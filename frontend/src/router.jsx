@@ -9,7 +9,7 @@ import Library from "./Components/Protected/Library";
 import LoginedRoute from "./Components/Protected/LoginedRoute";
 import UploadSong from "./Components/Protected/UploadSong";
 import Songs from "./Components/Protected/Library/Songs";
-import Playlists from "./Components/Protected/Library/Playlists";
+import Playlists from "./Components/Protected/Library/Playlists/Playlists";
 import AdminLayout from "./Components/Layouts/AdminLayout";
 import Dashboard from "./Components/Admin/Dashboard";
 import Account from "./Components/Admin/Account";
