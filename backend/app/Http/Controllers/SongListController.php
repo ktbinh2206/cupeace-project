@@ -182,4 +182,22 @@ class SongListController extends Controller
 
         return $position;
     }
+
+    public function updatePosition(Request $request, string $id)
+    {
+        $songs = $request->songs;
+
+        // Loop through the received songs and update their positions based on their order
+        foreach ($songs as $index => $songId) {
+
+            // Update the position of the song in the playlist
+            DB::table('song_positions')
+                ->where('song_id', $songId)
+                ->where('song_list_id', $id)
+                ->update(['position' => $index]);
+        }
+
+        // Optionally, you can return a response indicating success or any relevant data
+        return response()->json(['message' => 'Positions updated successfully']);
+    }
 }

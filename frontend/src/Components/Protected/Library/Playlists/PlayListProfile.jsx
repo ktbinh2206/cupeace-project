@@ -33,8 +33,27 @@ export default function PlayListProfile({
             }
         }
         setSongs(playlist.songs)
-        console.log(playlist);
     }, [playlist]);
+
+    useEffect(() => {
+        /*update list of playlist 
+         when songs are updated in the main page*/
+        setPlaylists(prevPlaylists => {
+            const updatedPlaylists = prevPlaylists.map(p => {
+                if (p.id === playlist.id) { // Replace 'playlistIdToUpdate' with the actual ID of the playlist you want to update
+                    // Update the songs of the playlist
+                    return {
+                        ...p,
+                        songs: songs // Assuming 'songs' is an array of songs you want to assign to the playlist
+                    };
+                } else {
+                    // Keep other playlists unchanged
+                    return p;
+                }
+            });
+            return updatedPlaylists;
+        });
+    }, [songs]);
 
 
     return (

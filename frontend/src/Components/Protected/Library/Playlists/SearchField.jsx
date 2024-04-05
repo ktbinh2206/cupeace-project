@@ -132,7 +132,7 @@ export default function SearchField({ playlist, setPlayList }) {
 
     useEffect(() => {
         setSearchValue('')
-    }, [playlist])
+    }, [playlist.id])
 
     return (
         <div className="min-h-96 px-10 ">

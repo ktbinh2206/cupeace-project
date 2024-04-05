@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useStore } from "../../../../store";
 import { Tooltip } from "@material-tailwind/react";
 import { PlayIcon, EllipsisHorizontalIcon, XMarkIcon } from "@heroicons/react/24/solid";
@@ -6,6 +6,11 @@ import { Link } from "react-router-dom";
 import { Dropdown } from "antd";
 import axiosClient from "~/axios";
 import { PlaylistsContext } from "./Playlists";
+import { DndContext, PointerSensor, useSensor, useSensors } from "@dnd-kit/core";
+import { SortableContext, verticalListSortingStrategy, useSortable } from "@dnd-kit/sortable"
+import { CSS } from '@dnd-kit/utilities';
+
+
 
 function formatViews(view) {
     if (view) {
@@ -24,6 +29,26 @@ function formatTime(time) {
 
 const SongItem = ({ song, index, setSongs }) => {
     const [globalState, globalDispatch] = useStore()
+
+
+    //Just use understand later
+    //from here
+    const {
+        attributes,
+        listeners,
+        setNodeRef,
+        transform,
+        transition,
+    } = useSortable({
+        id: song.index,
+        data: { ...song }
+    })
+
+    const dndKitCharacterStyles = {
+        transform: CSS.Translate.toString(transform),
+        transition,
+    }
+    //to here
 
     const [dropdownVisible, setDropdownVisible] = useState(false);
     const [hover, setHover] = useState(false)
@@ -48,6 +73,10 @@ const SongItem = ({ song, index, setSongs }) => {
     return (
 
         <tr
+            ref={setNodeRef}
+            style={dndKitCharacterStyles}
+            {...attributes}
+            {...listeners}
             className="items-center hover:bg-[#ffffff15] rounded-md max-w-full"
             onMouseEnter={() => setHover(true)}
             onMouseLeave={() => setHover(false)}
@@ -107,7 +136,8 @@ const SongItem = ({ song, index, setSongs }) => {
                         <div className=' bg-[#313131] p-1 rounded-lg'>
 
                             <div
-                                onClick={() => {
+                                onClick={(e) => {
+                                    e.stopPropagation()
                                     handleRemoveSong()
                                     setDropdownVisible(false)
                                 }}
@@ -133,26 +163,88 @@ const SongItem = ({ song, index, setSongs }) => {
         </tr>
     )
 }
-export default function SongField({ songs, setSongs }) {
-    const [globalState, globalDispatch] = useStore()
 
-    const [hover, setHover] = useState(false)
+export default function SongField({ songs, setSongs }) {
+
+    const tempSongs = songs.map((song, index) => {
+        return { ...song, index: index + 1 }; // Spread existing song properties and add index
+    });
+
+    const [songData, setSongData] = useState(tempSongs);
+
+    const { currentPlaylist } = useContext(PlaylistsContext)
+
+    useEffect(() => {
+        setSongData(tempSongs)
+    }, [songs])
+
+    const handleDragEnd = (e) => {
+        const { active, over } = e;
+        if (active && over && active.id !== over.id) {
+            const oldIndex = songData.findIndex(c => c.index === active.id);
+            const newIndex = songData.findIndex(c => c.index === over.id);
+            let updatedSongs = [...songData];
+            const [removed] = updatedSongs.splice(oldIndex, 1);
+            updatedSongs.splice(newIndex, 0, removed);
+
+            setSongData(updatedSongs);
+            setSongs(updatedSongs)
+
+            axiosClient
+                .post('/song-lists/' + currentPlaylist.id + '/update-position?_method=patch', {
+                    'songs': updatedSongs
+                })
+                .then(({ data }) => {
+                    console.log(data);
+                })
+                .catch(err => {
+                    console.log(err);
+                })
+        }
+    }
+
+    //Use for catch sensor/event drag and drop
+    const sensors = useSensors(
+        useSensor(PointerSensor, {
+            activationConstraint: {
+                distance: 8,
+            },
+        })
+    )
 
     return (
-        <div className="w-full px-10 my-3">
-            <table className="w-full">
-                <tbody>
-                    {songs &&
-                        songs.map((song, index) => (
-                            <SongItem
-                                setSongs={setSongs}
-                                key={index}
-                                index={index}
-                                song={song} />
-                        ))
-                    }
-                </tbody>
-            </table>
-        </div>
+        /**
+         * DndContext give the area to drag and drop items
+         */
+        <DndContext
+            onDragEnd={handleDragEnd}
+            sensors={sensors}
+        >
+            <div className="w-full px-10 my-3">
+                <table className="w-full">
+                    <tbody>
+                        {/* Sortable with unique id  
+                        items must be array of string
+                        */}
+                        <SortableContext
+                            items={songData.map(s => s.index)}
+                            strategy={verticalListSortingStrategy}
+                        >
+                            {songData &&
+                                songData.map((song, index) => (
+                                    <SongItem
+                                        setSongs={setSongs}
+                                        key={song.index}
+                                        index={index}
+                                        song={song} />
+                                ))
+                            }
+
+                        </SortableContext>
+                    </tbody>
+
+                </table>
+            </div>
+        </DndContext>
     )
 }
