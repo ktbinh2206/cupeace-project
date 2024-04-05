@@ -81,7 +81,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/song-lists', [SongListController::class, 'destroy'])->name('songLists.destroy');
     Route::patch('/song-lists/{id}', [SongListController::class, 'update'])->name(('songLists.update'));
     Route::post('/song-lists/{playlistId}/song/{songId}', [SongListController::class, 'addSong'])->name('songLists.add_song');
-    Route::delete('/song-lists/{playlistId}/song/{songId}', [SongListController::class, 'remove'])->name('songLists.remove');
+    Route::delete('/song-lists/{playlistId}/song/{position}', [SongListController::class, 'removeSong'])->name('songLists.remove');
 });
 //
 Route::get('/categories/search', [CategoryController::class, 'search'])->name('categories.search');

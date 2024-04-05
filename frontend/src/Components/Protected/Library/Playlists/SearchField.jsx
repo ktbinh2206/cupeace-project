@@ -1,9 +1,10 @@
 import { MagnifyingGlassIcon, PlayIcon, XMarkIcon } from "@heroicons/react/24/solid";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import axiosClient from "../../../../axios";
 import { actions, useStore } from "../../../../store"
 import { Tooltip } from "@material-tailwind/react";
 import { Link } from "react-router-dom";
+import { PlaylistsContext } from "./Playlists";
 
 
 function formatViews(view) {
@@ -20,15 +21,32 @@ function formatTime(time) {
     }
 }
 
-const SongItem = ({ song = null, index, currentPlaylist }) => {
+const SongItem = ({ song, index, playlist, setPlayList }) => {
     const [globalState, globalDispatch] = useStore()
+    const { setPlaylists } = useContext(PlaylistsContext)
 
     const [hover, setHover] = useState(false)
 
     const handleAddClick = () => {
+        console.log(playlist);
         axiosClient
-            .post('/song-lists/' + currentPlaylist.id + '/song/' + song.id)
-            .then((data) => {
+            .post('/song-lists/' + playlist?.id + '/song/' + song?.id)
+            .then(({ data }) => {
+                setPlayList(data)
+                setPlaylists(prevPlaylists => {
+                    const newList = prevPlaylists.map(item => {
+                        // Check if playlist needs replacement
+                        if (item.id === playlist.id) {
+                            // Replace playlist with new data (modify existing properties or create new object)
+                            return data
+                        } else {
+                            // Keep playlist unchanged
+                            return item
+                        }
+                    });
+
+                    return newList
+                })
                 console.log(data);
             })
             .catch(console.error)
@@ -74,7 +92,7 @@ const SongItem = ({ song = null, index, currentPlaylist }) => {
                 <div className="text-center text-[#bfbfbf]">{formatViews(song?.views)}</div>
             </td>
             <td className="whitespace-nowrap ml-2 px-2 py-3">
-                <div className="text-center text-[#bfbfbf]">{formatTime(song.duration)}</div>
+                <div className="text-center text-[#bfbfbf]">{formatTime(song?.duration)}</div>
             </td>
             <td className=" w-[71px] whitespace-nowrap ml-2 px-2 py-3 rounded-r-xl">
                 <div
@@ -87,7 +105,7 @@ const SongItem = ({ song = null, index, currentPlaylist }) => {
         </tr>
     )
 }
-export default function SearchField({ currentPlaylist }) {
+export default function SearchField({ playlist, setPlayList }) {
     const [searchValue, setSearchValue] = useState('')
     const [data, setData] = useState(null)
 
@@ -111,6 +129,10 @@ export default function SearchField({ currentPlaylist }) {
             setData(null)
         }
     }, [searchValue])
+
+    useEffect(() => {
+        setSearchValue('')
+    }, [playlist])
 
     return (
         <div className="min-h-96 px-10 ">
@@ -141,7 +163,9 @@ export default function SearchField({ currentPlaylist }) {
                             <SongItem
                                 key={song.id}
                                 song={song}
-                                currentPlaylist={currentPlaylist} />
+                                playlist={playlist}
+                                setPlayList={setPlayList}
+                            />
                         ))
                     }
                 </tbody>

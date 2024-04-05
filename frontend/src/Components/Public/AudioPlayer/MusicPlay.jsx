@@ -16,6 +16,7 @@ export default function MusicPlay() {
   const [src, setSrc] = useState();
   const [image, setImage] = useState();
   const [currentSong, setCurrentSong] = useState();
+  const [currentPlaylist, setCurrentPlaylist] = useState([]);
 
   const [streamingSession, setStreamingSession] = useState(null)
   //Store previous song for send to backend
@@ -27,24 +28,24 @@ export default function MusicPlay() {
 
   //When component mount and unmount
   useEffect(() => {
-
     setImage(`${import.meta.env.VITE_GET_IMAGE_URL}/` + state.currentPlaylist[0].image)
     setSrc(`${import.meta.env.VITE_GET_SONG_URL}/` + state.currentPlaylist[0].link)
     setCurrentSong(state.currentPlaylist[0])
     if (!prevSong) {
       setPrevSong(state.currentPlaylist[0])
     }
-
+    setCurrentPlaylist(state.currentPlaylist)
   }, [state.currentPlaylist]);
+
 
   const handleNextSong = () => {
     try {
 
       setPrevSong(currentSong)
-      setImage(`${import.meta.env.VITE_GET_IMAGE_URL}/` + state.currentPlaylist[position + 1].image)
-      setSrc(`${import.meta.env.VITE_GET_SONG_URL}/` + state.currentPlaylist[position + 1].link)
-      setCurrentSong(state.currentPlaylist[position + 1])
-      dispatch(actions.setCurrentSong(state.currentPlaylist[position + 1]))
+      setImage(`${import.meta.env.VITE_GET_IMAGE_URL}/` + currentPlaylist[position + 1].image)
+      setSrc(`${import.meta.env.VITE_GET_SONG_URL}/` + currentPlaylist[position + 1].link)
+      setCurrentSong(currentPlaylist[position + 1])
+      dispatch(actions.setCurrentSong(currentPlaylist[position + 1]))
       setPosition(position + 1)
     } catch (error) {
       console.log(error);
@@ -54,16 +55,13 @@ export default function MusicPlay() {
   const handlePreviousSong = () => {
     if (position > 0) {
       setPrevSong(currentSong)
-      setImage(`${import.meta.env.VITE_GET_IMAGE_URL}/` + state.currentPlaylist[position - 1].image)
-      setSrc(`${import.meta.env.VITE_GET_SONG_URL}/` + state.currentPlaylist[position - 1].link)
-      setCurrentSong(state.currentPlaylist[position - 1])
-      dispatch(actions.setCurrentSong(state.currentPlaylist[position - 1]))
-
+      setImage(`${import.meta.env.VITE_GET_IMAGE_URL}/` + currentPlaylist[position - 1].image)
+      setSrc(`${import.meta.env.VITE_GET_SONG_URL}/` + currentPlaylist[position - 1].link)
+      setCurrentSong(currentPlaylist[position - 1])
+      dispatch(actions.setCurrentSong(currentPlaylist[position - 1]))
       setPosition(position - 1)
     }
   }
-
-
 
   const handleSendLog = (duration) => {
     console.log(streamingSession);
@@ -77,7 +75,7 @@ export default function MusicPlay() {
       .then((data) => { console.log(data); })
       .catch(err => console.log(err))
   }
-  
+
   const handleSendFinalLog = (duration) => {
     console.log(streamingSession);
     console.log(prevSong);
@@ -92,13 +90,15 @@ export default function MusicPlay() {
   }
 
   const updateIsFollowedById = (songId, isFollowed) => {
-    const updatedSongs = state.currentPlaylist?.map(song => {
+    const updatedPlaylist = currentPlaylist?.map(song => {
       if (song.id === songId) {
         return { ...song, is_followed: isFollowed };
       }
       return song;
     });
-    return updatedSongs;
+
+    setCurrentSong({ ...currentSong, is_followed: isFollowed });
+    setCurrentPlaylist(updatedPlaylist);
   };
 
 
@@ -108,9 +108,7 @@ export default function MusicPlay() {
   const handleFollow = () => {
     console.log('follow');
 
-    // Update local state
-    setCurrentSong({ ...currentSong, is_followed: false });
-    dispatch(actions.setCurrentPlaylist(updateIsFollowedById(currentSong.id, true)));
+    updateIsFollowedById(currentSong.id, true);
 
     // Make API request with AbortController
     abortControllerRef.current = new AbortController();
@@ -140,9 +138,7 @@ export default function MusicPlay() {
   const handleUnfollow = () => {
     console.log('unfollow');
 
-    // Update local state
-    setCurrentSong({ ...currentSong, is_followed: false });
-    dispatch(actions.setCurrentPlaylist(updateIsFollowedById(currentSong.id, false)));
+    updateIsFollowedById(currentSong.id, false);
 
     // Make API request with AbortController
     abortControllerRef.current = new AbortController();

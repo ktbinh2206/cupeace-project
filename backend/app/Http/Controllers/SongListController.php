@@ -159,11 +159,27 @@ class SongListController extends Controller
             'song_id' => $songId,
             'position' => $position,
         ]);
+        $song = Song::find($songId);
+        $songList =  SongList::find($playlistId);
+        $songList->user;
+        foreach ($songList->songs as $song) {
+            $song->views = $song->views();
+        }
+        return $songList;
+    }
+    public function removeSong(string $playlistId, string $position)
+    {
+
+        DB::table('song_positions')
+            ->where('song_list_id', $playlistId)
+            ->where('position', $position)
+            ->delete();
+
+        DB::table('song_positions')
+            ->where('song_list_id', $playlistId)
+            ->where('position', '>', $position)
+            ->decrement('position');
 
         return $position;
-    }
-    public function removeSong(string $playlistId, string $songId)
-    {
-        return $playlistId . ' ' . $songId;
     }
 }

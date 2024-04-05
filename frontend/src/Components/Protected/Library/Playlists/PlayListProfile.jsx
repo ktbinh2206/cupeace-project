@@ -6,11 +6,13 @@ import { useModal } from "~/CustomeHooks";
 import SongField from "./SongField"
 import SearchField from "./SearchField"
 
+
+
 export default function PlayListProfile({
     playlist,
     playlists,
     setPlaylists,
-    setCurrentPlaylist,
+    setPlayList
 }) {
 
     const [backgroundColor, setBackgroundColor] = useState('')
@@ -20,6 +22,7 @@ export default function PlayListProfile({
     const imageRef = useRef(null)
 
     const [isShowing, toggle] = useModal()
+    const [songs, setSongs] = useState([])
 
     useEffect(() => {
         if (imageRef.current) {
@@ -29,6 +32,8 @@ export default function PlayListProfile({
                 setBackgroundColor(`rgb(${R}, ${G}, ${B})`);
             }
         }
+        setSongs(playlist.songs)
+        console.log(playlist);
     }, [playlist]);
 
 
@@ -93,9 +98,11 @@ export default function PlayListProfile({
                         f
                     </div>
                     <SongField
-                        songs={playlist.songs}
+                        setSongs={setSongs}
+                        songs={songs}
                     />
                     <SearchField
+                        setPlayList={setPlayList}
                         playlist={playlist}
                     />
                 </div>
@@ -104,7 +111,7 @@ export default function PlayListProfile({
                 isShowing
                     ?
                     <UpdatePlayListModal
-                        setCurrentPlaylist={setCurrentPlaylist}
+                        setCurrentPlaylist={setPlayList}
                         toggle={toggle}
                         playlist={playlist}
                         playlists={playlists}
