@@ -1,4 +1,4 @@
-import axiosClient from '../axios'
+import axiosClient from '../CommonAction/axios'
 import {
   SET_CURRENT_USER_ID,
   SET_CURRENT_TOKEN,

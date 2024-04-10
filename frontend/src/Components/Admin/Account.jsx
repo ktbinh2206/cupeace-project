@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import axiosClient from "../../axios"
+import axiosClient from "../../CommonAction/axios"
 import { ArrowLeftIcon, ArrowRightIcon, PlusIcon, ArrowPathIcon } from '@heroicons/react/24/solid'
 import AddNewUser from "./AddNewUser";
 

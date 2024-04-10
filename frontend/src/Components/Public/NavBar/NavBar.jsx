@@ -10,7 +10,7 @@ import {
 import { createElement, memo, useEffect, useMemo, useState } from "react";
 import Profile from "./Profile";
 import { useStore } from "../../../store";
-import axiosClient from "../../../axios";
+import axiosClient from "../../../CommonAction/axios";
 import NavBarNotification from "./NavBarNotification";
 
 function SearchIcon() {

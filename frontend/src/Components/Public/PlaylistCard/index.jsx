@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router"
-import axiosClient from "../../../axios";
+import axiosClient from "../../../CommonAction/axios";
 import { actions, useStore } from "../../../store";
 import { Tooltip } from "@material-tailwind/react"
 import { Link } from "react-router-dom";
 import { PlayCircleIcon } from '@heroicons/react/24/solid'
 import "./style.css"
 import playing from '../../../assets/current-play.gif'
+import { playSong } from "~/CommonAction";
 export default function PlaylistCard({ song = null }) {
 
   const [state, dispatch] = useStore();
@@ -28,28 +29,7 @@ export default function PlaylistCard({ song = null }) {
         }
       ]));
     } else {
-
-      if (currentController) {
-        // If there's a previous request, abort it
-        currentController.abort();
-      }
-      currentController = new AbortController();
-      const signal = currentController.signal;
-      if (state.currentSong?.id != song.id) {
-
-        axiosClient
-          .get('/song/get-playlists?songId=' + song.id, { signal })
-          .then(({ data }) => {
-            dispatch(actions.setCurrentPlaylist(data.playlist));
-            dispatch(actions.setCurrentSong(data.playlist[0]));
-          })
-          .catch(err => {
-            if (err.name !== 'AbortError') {
-              console.error(err);
-              // Handle other errors (not abort errors) if needed
-            }
-          });
-      }
+      playSong(null, song, currentController, state, dispatch)
     }
   };
 

@@ -5,7 +5,7 @@ import "./audio.css"
 import SongInformation from "./SongInformation";
 import CenterField from "./CenterField";
 import RightFunctionButton from "./RightFunctionButton";
-import axiosClient from "../../../axios"
+import axiosClient from "../../../CommonAction/axios"
 
 
 

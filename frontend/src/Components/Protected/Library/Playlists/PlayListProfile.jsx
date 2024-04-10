@@ -1,10 +1,12 @@
-import { PencilIcon } from "@heroicons/react/24/solid"
+import { PencilIcon, PlayCircleIcon } from "@heroicons/react/24/solid"
 import { useEffect, useRef, useState } from "react";
-import { getAverageColor, getTextColor } from "~/getColor";
+import { getAverageColor, getTextColor } from "~/CommonAction/getColor";
 import UpdatePlayListModal from "~/Modals/UpdatePlayListModal"
 import { useModal } from "~/CustomeHooks";
 import SongField from "./SongField"
 import SearchField from "./SearchField"
+import { actions, useStore } from "~/store";
+import { playSong } from "~/CommonAction";
 
 
 
@@ -14,6 +16,8 @@ export default function PlayListProfile({
     setPlaylists,
     setPlayList
 }) {
+
+    const [state, dispatch] = useStore()
 
     const [backgroundColor, setBackgroundColor] = useState('')
     const [textColor, setTextColor] = useState('')
@@ -55,6 +59,10 @@ export default function PlayListProfile({
         });
     }, [songs]);
 
+    const handleClick = () => {
+        console.log('click');
+        playSong(playlist.songs, playlist.songs[0], null, state, dispatch)
+    }
 
     return (
         <>
@@ -113,9 +121,13 @@ export default function PlayListProfile({
                 <div className="min-h-60"
                     style={{ backgroundSize: "cover", background: `linear-gradient(180deg, rgba(0,0,0,0.3533788515406162) 0%, rgba(0,0,0,0.6474964985994398) 40%, rgba(0,0,0,1) 90%)` }}
                 >
-                    <div>
-                        f
+                    <div className="px-10 py-5">
+                        <PlayCircleIcon
+                            onClick={handleClick}
+                            className={`h-16 w-16 text-[#4741B5]  hover:scale-105 active:text-[#2c2a5c] transform duration-300 hover:opacity-100 hover:cursor-pointer `}
+                        />
                     </div>
+
                     <SongField
                         setSongs={setSongs}
                         songs={songs}

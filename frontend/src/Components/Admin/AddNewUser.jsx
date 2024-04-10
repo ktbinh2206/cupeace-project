@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import axiosClient from "../../axios";
+import axiosClient from "../../CommonAction/axios";
 
 export default function AddNewUser({ openAddUserModal }) {
 

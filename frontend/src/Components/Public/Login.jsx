@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import axiosClient from "../../axios";
+import axiosClient from "../../CommonAction/axios";
 import router from "../../router"
 import { useStore, actions } from "../../store";
 import { ArrowPathIcon } from "@heroicons/react/24/solid"

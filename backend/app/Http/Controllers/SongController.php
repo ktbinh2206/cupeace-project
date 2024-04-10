@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\NotificationEvent;
 use App\Models\Artist;
 use App\Models\Song;
 use App\Models\User;
@@ -376,15 +377,39 @@ class SongController extends Controller
                 $status = '';
                 break;
         }
+
         foreach ($songs as $song) {
             $users = User::find($song['upload_by']);
             Song::find($song['id'])
                 ->update(['song_status_id' => $statusId]);
             foreach ($users as $user) {
+                $notification = new SongStatusUpdate(Song::find($song['id']), $song['name'] . '\'s status has been update to ' . $status);
                 Notification::send(
-                    User::find($user->id),
-                    new SongStatusUpdate(Song::find($song['id']), $song['name'] . '\'s status has been update to ' . $status)
+                    $user,
+                    $notification
                 );
+                $songModel = Song::find($song['id']);
+
+                // Get the song's image
+                $songImage = $songModel->image;
+
+                // Create the status message
+                $statusMessage = $song['name'] . '\'s status has been updated to ' . $status;
+
+                // Create an array with the data to be passed to the event
+                $eventData = [
+                    'image' => $songImage,
+                    'content' => $statusMessage
+                ];
+
+                // Get the current timestamp
+                $timestamp = now();
+
+                // Get the user's ID
+                $userId = $user->id;
+
+                // Dispatch the event with the data
+                event(new NotificationEvent($eventData, $timestamp, $userId, $notification->getNotificationId()));
             }
         }
         return $songs;

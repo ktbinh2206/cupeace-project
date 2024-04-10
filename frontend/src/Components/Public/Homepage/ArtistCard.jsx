@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router"
-import axiosClient from "../../../axios";
+import axiosClient from "../../../CommonAction/axios";
 import { actions, useStore } from "../../../store";
 import { Tooltip } from "@material-tailwind/react"
 import { Link } from "react-router-dom";

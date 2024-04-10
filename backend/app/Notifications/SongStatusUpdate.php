@@ -14,6 +14,7 @@ class SongStatusUpdate extends Notification
 
     protected $song;
     protected $content;
+    public $id;
 
     /**
      * Create a new notification instance.
@@ -22,6 +23,7 @@ class SongStatusUpdate extends Notification
     {
         $this->song = $song;
         $this->content = $content;
+        $this->id = uniqid();
     }
 
     /**
@@ -56,5 +58,10 @@ class SongStatusUpdate extends Notification
             'image' => $this->song->image,
             'content' => (string)$this->content,
         ];
+    }
+
+    public function getNotificationId()
+    {
+        return $this->id;
     }
 }

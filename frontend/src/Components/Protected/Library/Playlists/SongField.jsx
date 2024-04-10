@@ -4,7 +4,7 @@ import { Tooltip } from "@material-tailwind/react";
 import { PlayIcon, EllipsisHorizontalIcon, XMarkIcon } from "@heroicons/react/24/solid";
 import { Link } from "react-router-dom";
 import { Dropdown } from "antd";
-import axiosClient from "~/axios";
+import axiosClient from "~/CommonAction/axios";
 import { PlaylistsContext } from "./Playlists";
 import { DndContext, PointerSensor, useSensor, useSensors } from "@dnd-kit/core";
 import { SortableContext, verticalListSortingStrategy, useSortable } from "@dnd-kit/sortable"
@@ -166,7 +166,7 @@ const SongItem = ({ song, index, setSongs }) => {
 
 export default function SongField({ songs, setSongs }) {
 
-    const tempSongs = songs.map((song, index) => {
+    const tempSongs = songs?.map((song, index) => {
         return { ...song, index: index + 1 }; // Spread existing song properties and add index
     });
 
@@ -227,11 +227,11 @@ export default function SongField({ songs, setSongs }) {
                         items must be array of string
                         */}
                         <SortableContext
-                            items={songData.map(s => s.index)}
+                            items={songData?.map(s => s.index)}
                             strategy={verticalListSortingStrategy}
                         >
                             {songData &&
-                                songData.map((song, index) => (
+                                songData?.map((song, index) => (
                                     <SongItem
                                         setSongs={setSongs}
                                         key={song.index}

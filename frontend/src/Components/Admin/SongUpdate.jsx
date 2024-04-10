@@ -2,7 +2,7 @@
 import { useState } from "react";
 import SongItem from "./SongItem";
 import { actions, useStore } from "../../store"
-import axiosClient from "../../axios";
+import axiosClient from "../../CommonAction/axios";
 
 const status = [
   {

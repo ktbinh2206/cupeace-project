@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router";
-import axiosClient from "../../../axios";
+import axiosClient from "../../../CommonAction/axios";
 
 import { actions, useStore } from "../../../store";
-import { getAverageColor } from "../../../getColor";
+import { getAverageColor } from "../../../CommonAction/getColor";
 
 export default function UserProfile() {
   const { id } = useParams();

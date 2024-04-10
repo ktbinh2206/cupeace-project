@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router";
-import axiosClient from "../../../axios";
+import axiosClient from "../../../CommonAction/axios";
 import SongFieldData from "./SongFieldData"
 
 import verified from "../../../assets/verified.svg"
-import { getAverageColor, getTextColor } from "../../../getColor";
+import { getAverageColor, getTextColor } from "../../../CommonAction/getColor";
 
 // Formatting function for displaying view count with a '.' as a thousand separator.
 // This function uses Regular Expression (RegEx) to replace every 3rd digit from the right

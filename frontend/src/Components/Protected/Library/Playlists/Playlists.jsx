@@ -1,7 +1,7 @@
 import { PencilIcon, PlusIcon } from "@heroicons/react/24/solid"
 import { Tooltip } from "@material-tailwind/react"
 import { createContext, useEffect, useRef, useState } from "react"
-import axiosClient from "../../../../axios"
+import axiosClient from "../../../../CommonAction/axios"
 import PlayListItem from "./PlayListItem"
 
 import PlayListProfile from "./PlayListProfile"
@@ -29,6 +29,8 @@ export default function Playlists() {
       })
 
   }
+
+  console.log(playlists);
 
   useEffect(() => {
     axiosClient

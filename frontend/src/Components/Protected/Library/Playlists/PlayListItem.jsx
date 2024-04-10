@@ -2,7 +2,7 @@
 import { XMarkIcon } from '@heroicons/react/24/solid';
 import { Dropdown, } from 'antd';
 import { useState } from 'react';
-import axiosClient from '../../../../axios';
+import axiosClient from '../../../../CommonAction/axios';
 import { useModal } from '../../../../CustomeHooks';
 import DeleteConfirmModal from '../../../../Modals/DeleteConfirmModal';
 
@@ -122,9 +122,9 @@ export default function PlayListItem({ setPlayLists, playlist, setCurrentPlaylis
                     currentPlaylist == null
                         ?
                         <div className="grid grid-cols-[56px_1fr_1fr] items-center gap-3 hover:bg-[#ffffff0e] hover:cursor-pointer p-1 rounded-sm">
-                            <div className="">
+                            <div className="w-14 aspect-square">
                                 <img
-                                    className="w-14 rounded-md"
+                                    className="w-14 aspect-square object-cover rounded-md"
                                     src={`${import.meta.env.VITE_GET_IMAGE_URL}/` + playlist.image} />
                             </div>
                             <div className="">
@@ -142,9 +142,9 @@ export default function PlayListItem({ setPlayLists, playlist, setCurrentPlaylis
                         :
 
                         <div className="w-full grid grid-cols-[56px_1fr] items-center gap-3 hover:bg-[#ffffff0e] hover:cursor-pointer p-1 rounded-sm">
-                            <div className="">
+                            <div className="w-14 aspect-square">
                                 <img
-                                    className="w-14 rounded-md"
+                                    className="w-14 aspect-square object-cover rounded-md"
                                     src={`${import.meta.env.VITE_GET_IMAGE_URL}/` + playlist.image} />
                             </div>
                             <div className="w-full">

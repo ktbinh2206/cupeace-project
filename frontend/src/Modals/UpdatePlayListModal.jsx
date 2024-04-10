@@ -1,6 +1,6 @@
 import { ArrowPathIcon, XMarkIcon } from "@heroicons/react/24/solid";
 import { useEffect, useState } from "react";
-import axiosClient from "../axios";
+import axiosClient from "../CommonAction/axios";
 import { setCurrentPlaylist } from "../store/action";
 
 export default function UpdatePlayListModal({
@@ -124,7 +124,7 @@ export default function UpdatePlayListModal({
                             id="playlist-image"
                             hidden={true} />
                         <img
-                            className="w-[180px] aspect-square rounded-md"
+                            className="w-[180px] aspect-square object-cover rounded-md"
                             src={src} />
                     </label>
                     <div className="flex-grow flex flex-col gap-y-3">

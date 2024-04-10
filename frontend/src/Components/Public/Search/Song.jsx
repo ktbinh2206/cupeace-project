@@ -3,7 +3,7 @@ import { Tooltip } from "@material-tailwind/react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { actions, useStore } from "../../../store";
-import axiosClient from "../../../axios";
+import axiosClient from "../../../CommonAction/axios";
 
 import playing from '../../../assets/current-play.gif'
 

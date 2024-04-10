@@ -1,6 +1,6 @@
 import { MagnifyingGlassIcon, PlayIcon, XMarkIcon } from "@heroicons/react/24/solid";
 import { useContext, useEffect, useState } from "react";
-import axiosClient from "../../../../axios";
+import axiosClient from "../../../../CommonAction/axios";
 import { actions, useStore } from "../../../../store"
 import { Tooltip } from "@material-tailwind/react";
 import { Link } from "react-router-dom";
@@ -34,7 +34,7 @@ const SongItem = ({ song, index, playlist, setPlayList }) => {
             .then(({ data }) => {
                 setPlayList(data)
                 setPlaylists(prevPlaylists => {
-                    const newList = prevPlaylists.map(item => {
+                    const newList = prevPlaylists?.map(item => {
                         // Check if playlist needs replacement
                         if (item.id === playlist.id) {
                             // Replace playlist with new data (modify existing properties or create new object)
@@ -159,7 +159,7 @@ export default function SearchField({ playlist, setPlayList }) {
             <table className="w-full">
                 <tbody>
                     {data &&
-                        data.map(song => (
+                        data?.map(song => (
                             <SongItem
                                 key={song.id}
                                 song={song}

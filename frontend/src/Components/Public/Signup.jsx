@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import "../../assets/css/signup.css";
-import axiosClient from "../../axios";
+import axiosClient from "../../CommonAction/axios";
 import router from "../../router";
 import { actions, useStore } from "../../store";
 import { ArrowPathIcon } from "@heroicons/react/24/solid"

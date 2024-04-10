@@ -21,12 +21,8 @@ class NotificationController extends Controller
     public function read(Request $request)
     {
         $user = Auth::user();
-        $notifications = $request->query('id');
         foreach ($user->unreadNotifications  as $notification) {
-            if (strcmp($notifications, $notification->id)) {
-                $notification->markAsRead();
-                return $notification;
-            }
+            $notification->markAsRead();
         }
     }
 }

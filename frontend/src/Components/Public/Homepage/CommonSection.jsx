@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import PlaylistCard from "../PlaylistCard";
-import axiosClient from "../../../axios";
+import axiosClient from "../../../CommonAction/axios";
 import { useStore } from "../../../store";
 import ArtistCard from "./ArtistCard"
 

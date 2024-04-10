@@ -1,11 +1,11 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useParams } from "react-router";
-import axiosClient from "../../../axios";
+import axiosClient from "../../../CommonAction/axios";
 import { PlayCircleIcon } from "@heroicons/react/24/solid";
 import ArtistCard from "./ArtistCard";
 import { Tooltip } from "@material-tailwind/react";
 import { actions, useStore } from "../../../store";
-import { getAverageColor, getTextColor } from "../../../getColor"; // Import the getAverageColor function
+import { getAverageColor, getTextColor } from "../../../CommonAction/getColor"; // Import the getAverageColor function
 import { Link } from "react-router-dom";
 
 function formatViews(view) {

@@ -63,6 +63,7 @@ class SongListController extends Controller
                 'song_list_type_id' => 2,
             ]);
             $songList->user;
+            $songList->songs;
             return $songList;
         }
     }

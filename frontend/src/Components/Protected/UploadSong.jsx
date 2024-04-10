@@ -1,6 +1,6 @@
 import { useEffect, useReducer, useRef, useState } from "react";
 import StickyNavbar from "../Public/NavBar/NavBar";
-import axiosClient from "../../axios";
+import axiosClient from "../../CommonAction/axios";
 import { actions, useStore } from "../../store";
 import { ChevronDownIcon, MagnifyingGlassIcon, XMarkIcon, PencilSquareIcon } from '@heroicons/react/24/solid'
 import defaultImage from "../../assets/song_icon.png"
